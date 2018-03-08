@@ -8,6 +8,9 @@ const cellColor = '#3A5086';
 const solidValue = 200;
 const crackedValue = 100;
 
+const minStartingPieces = 11;
+const maxStartingPieces = 21;
+
 function applyGravity(){
   for (let i = 1; i <= 7; i++){
     for (let j = 7; j >= 1; j--){
@@ -25,7 +28,6 @@ function applyGravity(){
       }
 
       if (j !== j2){
-        console.log('Applying gravity at '+i+', '+j);
         grid[i][j2] = grid[i][j];
         grid[i][j] = 0;
       }
@@ -170,7 +172,7 @@ function loadImages(){
     let img = new Image();
     img.src = 'img/' + i + 'piece.png';
     img.onload = function(){
-      drawDropSection()
+      imageLoadPost();
     }
     images.push(img);
   }
@@ -178,12 +180,15 @@ function loadImages(){
   const solid = new Image();
   solid.src = 'img/solid.png';
   solid.onload = function(){
-    drawDropSection()
+    imageLoadPost();
   }
   images.push(solid);
 
   const cracked = new Image();
   cracked.src = 'img/cracked.png';
+  cracked.onload = function(){
+    imageLoadPost();
+  }
   images.push(cracked);
 }
 
@@ -225,22 +230,15 @@ function canvasInit(){
 }
 
 function getRandomPiece(onlyNumbers){
-  let pieces;
+  let max = 8;
   if (onlyNumbers){
-    pieces = '1234567';
-  } else {
-    pieces = '1234567S';
+    max = 7;
   }
 
-  const piece = pieces[pieces.length * Math.random() | 0];
-  let value;
-  if (piece === 'S'){
-    value = solidValue;
-  } else {
-    value = parseInt(piece);
-  }
+  let piece = randomIntFromInterval(1, max);
+  piece = piece === 8 ? solidValue : piece;
 
-  return value;
+  return piece;
 }
 
 function nextPieceReset(){
@@ -250,27 +248,57 @@ function nextPieceReset(){
   drawDropSection();
 }
 
-document.addEventListener('keydown', event => {
-  const keyCode = event.keyCode;
-  if (keyCode === 37 || keyCode === 65){
-    nextPieceMove(-1);
-  } else if (keyCode === 39 || keyCode === 68){
-    nextPieceMove(1);
-  } else if (keyCode === 40 || keyCode === 83){
-    nextPieceDrop();
+function gridInit(){
+  let piecesToDrop = randomIntFromInterval(minStartingPieces, maxStartingPieces);
+  for (; piecesToDrop > 0; piecesToDrop--){
+    const piece = getRandomPiece(false);
+    let col;
+    do {
+      col = randomIntFromInterval(1, 7);
+    } while (grid[col][1] !== 0);
+
+    for (let j = 7; j >= 1; j--){
+      if (grid[col][j] === 0){
+        grid[col][j] = piece;
+        break;
+      }
+    }
   }
-});
+}
+
+function imageLoadPost(){
+  loadedImages++;
+  if (loadedImages === images.length){
+    startGame();
+  }
+}
+
+function startGame(){
+  document.addEventListener('keydown', event => {
+    const keyCode = event.keyCode;
+    if (keyCode === 37 || keyCode === 65){
+      nextPieceMove(-1);
+    } else if (keyCode === 39 || keyCode === 68){
+      nextPieceMove(1);
+    } else if (keyCode === 40 || keyCode === 83){
+      nextPieceDrop();
+    }
+  });
+
+  gridInit();
+  checkMatches();
+  drawGrid();
+  nextPieceReset();
+}
+
+canvasInit();
 
 const grid = createMatrix(8, 8);
-
 const nextPiece = {
   col: 4,
   value: 1
 }
 
 const images = [];
+let loadedImages = 0;
 loadImages();
-
-canvasInit();
-drawGrid();
-nextPieceReset();
