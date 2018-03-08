@@ -1,9 +1,18 @@
+const body = document.body;
 const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
 const cellWidth = 50;
 const cellPadding = 2;
 const cellColor = '#3A5086';
+
+const backgroundColors = [
+  '#95bad7',
+  '#afd8b6',
+  '#f6f6f6',
+  '#eaa3a9',
+  '#f5cfa0'
+];
 
 const solidValue = 200;
 const crackedValue = 100;
@@ -251,6 +260,13 @@ function getRandomPiece(onlyNumbers){
 }
 
 function nextPieceReset(){
+  let backgroundColor;
+  do {
+    backgroundColor = backgroundColors[randomIntFromInterval(0, backgroundColors.length-1)];
+  } while (backgroundColor === lastBackground);
+  lastBackground = backgroundColor;
+  body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
+
   nextPiece.col = 4;
   nextPiece.value = getRandomPiece(false);
 
@@ -307,6 +323,8 @@ const nextPiece = {
   col: 4,
   value: 1
 }
+
+let lastBackground = '#fff';
 
 const images = [];
 let loadedImages = 0;
