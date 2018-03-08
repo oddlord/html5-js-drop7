@@ -195,6 +195,13 @@ function loadImages(){
 function drawPieceImg(value, i, j){
   const img = getPieceImg(value);
   const [x, y] = getCellOrigin(i, j);
+
+  // if image resolution is still not enough, consider step down resizing
+  // as explained here
+  // https://stackoverflow.com/questions/18761404/how-to-scale-images-on-a-html5-canvas-with-better-interpolation
+  // and here
+  // https://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
+
   context.drawImage(img, x, y, cellWidth, cellWidth);
 }
 
@@ -221,12 +228,14 @@ function drawDropSection(){
 }
 
 function canvasInit(){
-  context.imageSmoothingEnabled = false;
 
   const w = 7*cellWidth + 8*cellPadding;
-  canvas.setAttribute('width', w);
+  canvas.width = w;
   const h = 8*cellWidth + 9*cellPadding;
-  canvas.setAttribute('height', h);
+  canvas.height = h;
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
 }
 
 function getRandomPiece(onlyNumbers){
