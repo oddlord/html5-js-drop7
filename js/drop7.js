@@ -35,6 +35,29 @@ function applyGravity(){
   checkMatches();
 }
 
+function breakNeighbour(i, j){
+  if (grid[i][j] === solidValue){
+    grid[i][j] = crackedValue;
+  } else if (grid[i][j] === crackedValue){
+    grid[i][j] = getRandomPiece(true);
+  }
+}
+
+function breakNeighbours(i, j){
+  if (i > 1){
+    breakNeighbour(i-1, j);
+  }
+  if (i < 7){
+    breakNeighbour(i+1, j);
+  }
+  if (j > 1){
+    breakNeighbour(i, j-1);
+  }
+  if (j < 7){
+    breakNeighbour(i, j+1);
+  }
+}
+
 function isPieceAMatch(i, j){ // check if a piece at given coords is a match
   const value = grid[i][j];
 
@@ -94,6 +117,7 @@ function checkMatches(){
   if (matchedPieces.length > 0){
     for (let matchedPiece of matchedPieces){
       grid[matchedPiece.i][matchedPiece.j] = 0;
+      breakNeighbours(matchedPiece.i, matchedPiece.j);
     }
     drawGrid();
     applyGravity();
