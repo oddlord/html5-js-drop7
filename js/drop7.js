@@ -1,14 +1,3 @@
-const body = document.body;
-const canvas = document.getElementById('d7-canvas');
-const context = canvas.getContext('2d');
-
-const canvasHeightScale = 0.9;        // WRT document body
-const gridDropHeightScale = 0.8;      // WRT canvas
-const cellPaddingScale = 0.033;       // WRT cell width
-const scoreSectionHeightScale = 0.8;  // WRT upper part (drop counter excluded)
-const scoreVPaddingScale = 0.25;      // WRT score section
-const dropCounterPaddingScale = 0.1;  // WRT drop counter width
-
 const cellColor = '#28456f';
 const backgroundColors = [
   '#488557',  // 1 piece color
@@ -51,6 +40,7 @@ function applyGravity(){
       }
     }
   }
+
   drawGrid();
   checkMatches();
 }
@@ -79,7 +69,7 @@ function breakNeighbours(i, j){
 }
 
 function isPieceAMatch(i, j){ // check if a piece at given coords is a match
-  const value = grid[i][j];
+  const piece = grid[i][j];
 
   let counter = 1;  // vertical check
   for (let j2 = j-1; j2 >= 1; j2--){
@@ -91,7 +81,7 @@ function isPieceAMatch(i, j){ // check if a piece at given coords is a match
   for (let j2 = j+1; j2 <= 7; j2++){  // check for empty cells not necessary
     counter++;                        // here because of gravity
   }
-  if (counter === value){
+  if (counter === piece){
     return true;
   }
 
@@ -108,7 +98,7 @@ function isPieceAMatch(i, j){ // check if a piece at given coords is a match
     }
     counter++;
   }
-  if (counter === value){
+  if (counter === piece){
     return true;
   }
 
@@ -121,8 +111,8 @@ function checkMatches(){
 
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
-      const value = grid[i][j];
-      if (value === 0 || value === solidValue || value === crackedValue){
+      const piece = grid[i][j];
+      if (piece === 0 || piece === solidValue || piece === crackedValue){
         continue;
       }
 
@@ -214,8 +204,8 @@ function pieceDrop(playerDrop) {
 
   for (let j = 7; j >= 1; j--){
     if (grid[nextPiece.col][j] === 0){
-      grid[nextPiece.col][j] = nextPiece.value;
-      nextPiece.value = 0;
+      grid[nextPiece.col][j] = nextPiece.piece;
+      nextPiece.piece = 0;
       break;
     }
   }
@@ -238,7 +228,11 @@ function pieceDrop(playerDrop) {
   checkEmptyGrid();
 
   if (!gameover){
-    nextPieceReset();
+    chain = 0;
+    if (playerDrop){
+      drawScore();
+      nextPieceReset();
+    }
   }
 }
 
@@ -247,189 +241,33 @@ function pieceMove(dir) {
   drawDropSection();
 }
 
-function getCellOrigin(i, j){
-  const x = (i-1)*cellWidth + i*cellPadding;
-  const y = upperSectionHeight + j*cellWidth + (j+1)*cellPadding;
-  return [x, y];
-}
-
-function getPieceImg(value){
-  if (value >= 1 && value <= 7){
-    return images[value-1];
-  } else if (value === solidValue){
-    return images[7];
-  } else if (value === crackedValue){
-    return images[8];
-  } else {
-    throw new Error('Invalid piece of value ' + value);
-  }
-}
-
-function loadImages(){
-  for (let i = 1; i <= 7; i++){
-    let img = new Image();
-    img.src = 'img/' + i + 'piece.png';
-    img.onload = function(){
-      imageLoadPost();
-    }
-    images.push(img);
-  }
-
-  const solid = new Image();
-  solid.src = 'img/solid.png';
-  solid.onload = function(){
-    imageLoadPost();
-  }
-  images.push(solid);
-
-  const cracked = new Image();
-  cracked.src = 'img/cracked.png';
-  cracked.onload = function(){
-    imageLoadPost();
-  }
-  images.push(cracked);
-}
-
-function drawPieceImg(value, i, j){
-  const img = getPieceImg(value);
-  const [x, y] = getCellOrigin(i, j);
-
-  // if image resolution is still not enough, consider step down resizing
-  // as explained here
-  // https://stackoverflow.com/questions/18761404/how-to-scale-images-on-a-html5-canvas-with-better-interpolation
-  // and here
-  // https://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
-
-  context.drawImage(img, x, y, cellWidth, cellWidth);
-}
-
-function drawGrid(){
-  context.clearRect(0, upperSectionHeight + dropSectionHeight, gridWidth, gridWidth);
-
-  context.fillStyle = cellColor;
-  for (let i = 1; i <= 7; i++){
-    for (let j = 0; j <= 7; j++){
-      const [x, y] = getCellOrigin(i, j);
-
-      if (j !== 0){
-        context.fillRect(x, y, cellWidth, cellWidth);
-      }
-
-      const value = grid[i][j];
-      if (value !== 0){
-        drawPieceImg(value, i, j);
-      }
-    }
-  }
-}
-
-function drawDropSection(){
-  context.clearRect(0, upperSectionHeight, gridWidth, dropSectionHeight);
-  if (nextPiece.value !== 0){
-    drawPieceImg(nextPiece.value, nextPiece.col, 0);
-  }
-}
-
-function drawScore(){
-  context.clearRect(0, 0, gridWidth, scoreSectionHeight);
-  const scoreFontHeight = gameover ? scoreHeight/2 : scoreHeight;
-  context.font = scoreFontHeight + 'px Arial';
-  context.fillStyle = cellColor;
-  context.textAlign = 'center';
-  context.textBaseline = 'top';
-  const scoreText = gameover ? 'GAME OVER! ' + score : score;
-  context.fillText(scoreText, gridWidth/2, 0);
-}
-
-function drawDropCounter(){
-  context.clearRect(0, scoreSectionHeight, gridWidth, dropCounterWidth + levelHeight);
-
-  context.fillStyle = cellColor;
-  context.strokeStyle = cellColor;
-  for (let i = 1; i <= maxDropCounts; i++){
-    context.beginPath();
-    const radius = dropCounterWidth/2;
-    const originX = (i-1)*dropCounterWidth + i*dropCounterPadding + radius;
-    const originY = scoreSectionHeight + radius;
-    context.arc(originX, originY, radius, 0, 2*Math.PI, false);
-    if (i <= dropCount){
-      context.fill();
-    } else {
-      context.stroke();
-    }
-  }
-
-  context.font = levelHeight + 'px Arial';
-  context.textAlign = 'left';
-  context.textBaseline = 'top'
-  context.fillText('LEVEL '+level, 0, scoreSectionHeight + dropCounterWidth);
-}
-
-function canvasInit(){
-
-  canvas.width = gridWidth;
-  canvas.height = canvasHeight;
-
-  context.imageSmoothingEnabled = true;
-  context.imageSmoothingQuality = 'high';
-}
-
-function getRandomPiece(onlyNumbers){
-  let max = 8;
-  if (onlyNumbers){
-    max = 7;
-  }
-
-  let piece = randomIntFromInterval(1, max);
-  piece = piece === 8 ? solidValue : piece;
-
-  return piece;
-}
-
 function nextPieceReset(){
-  chain = 0;
-  drawScore();
-
   nextPiece.col = 4;
-  nextPiece.value = getRandomPiece(false);
+  nextPiece.piece = getRandomPiece(false);
 
   let backgroundColor;
-  if (nextPiece.value === solidValue){
+  if (nextPiece.piece === solidValue){
     backgroundColor = backgroundColors[7];
   } else {
-    backgroundColor = backgroundColors[nextPiece.value - 1];
+    backgroundColor = backgroundColors[nextPiece.piece - 1];
   }
-  body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
+  document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
 
   drawDropSection();
 }
 
-function createAllDropCombinations(){
-  const combinations = [];
-
-  for (let piece = 1; piece <= 8; piece++){
-    for (let col = 1; col <= 7; col++){
-      combinations.push({
-        col: col,
-        value: piece === 8 ? solidValue : piece
-      });
-    }
-  }
-
-  return combinations;
-}
-
-function gridInit(){
+function gridReset(){
   let piecesToDrop = randomIntFromInterval(minStartingPieces, maxStartingPieces);
-  let combinations = createAllDropCombinations();
+  let combinations = getAllDropCombinations();
   while (piecesToDrop > 0 && combinations.length > 0){
+    //debugger;
     const combinationIndex = randomIntFromInterval(0, combinations.length-1);
 
     const gridCopy = createMatrix(grid.length, grid[0].length);
     copyMatrix(grid, gridCopy);
 
     nextPiece.col = combinations[combinationIndex].col;
-    nextPiece.value = combinations[combinationIndex].value;
+    nextPiece.piece = combinations[combinationIndex].piece;
     pieceDrop(false);
 
     if (score > 0){
@@ -437,91 +275,54 @@ function gridInit(){
       score = 0;
       copyMatrix(gridCopy, grid);
     } else {
-      combinations = createAllDropCombinations();
+      combinations = getAllDropCombinations();
       piecesToDrop--;
     }
   }
 }
 
-function imageLoadPost(){
-  loadedImages++;
-  if (loadedImages === images.length){
-    startGame();
-  }
-}
-
 function startGame(){
-  document.addEventListener('keydown', event => {
-    if (gameover){
-      return;
-    }
+  gameStarted = true;
+  gameover = false;
 
-    const keyCode = event.keyCode;
-    if (keyCode === 37 || keyCode === 65){
-      pieceMove(-1);
-    } else if (keyCode === 39 || keyCode === 68){
-      pieceMove(1);
-    } else if (keyCode === 40 || keyCode === 83){
-      pieceDrop(true);
-    }
-  });
+  score = 0;
+  chain = 0;
+  dropCount = maxDropCounts;
+  level = 1;
 
-  gridInit();
+  drawScore();
   drawDropCounter();
-  nextPieceReset();
+
   drawGrid();
+  gridReset();
+  drawGrid();
+
+  nextPieceReset();
 }
 
-function setDimensions(){
-  canvasHeight = body.clientHeight * canvasHeightScale;
-  gridDropHeight = canvasHeight * gridDropHeightScale;
-  upperSectionHeight = canvasHeight * (1-gridDropHeightScale);
+document.addEventListener('keydown', event => {
+  if (gameover || !gameStarted){
+    return;
+  }
 
-  cellWidth = gridDropHeight / (8 + cellPaddingScale*9);
-  cellPadding = cellWidth * cellPaddingScale;
-
-  gridWidth = cellWidth*7 + cellPadding*8;
-  dropSectionHeight = cellPadding + cellWidth;
-
-  dropCounterWidth = gridWidth / (30 + dropCounterPaddingScale*31);
-  dropCounterPadding = dropCounterWidth * dropCounterPaddingScale;
-  scoreSectionHeight = (upperSectionHeight - dropCounterWidth) * scoreSectionHeightScale;
-  scoreHeight = scoreSectionHeight * (1-scoreVPaddingScale);
-  scoreVPadding = scoreSectionHeight * scoreVPaddingScale;
-  levelHeight = (upperSectionHeight - dropCounterWidth) * (1-scoreSectionHeightScale);
-}
-
-var canvasHeight;
-var gridDropHeight;
-var upperSectionHeight;
-
-var cellWidth;
-var cellPadding;
-
-var gridWidth;
-var dropSectionHeight;
-
-var dropCounterWidth;
-var dropCounterPadding;
-var scoreSectionHeight;
-var scoreHeight;
-var scoreVPadding;
-var levelHeight;
-
-setDimensions();
-canvasInit();
+  const keyCode = event.keyCode;
+  if (keyCode === 37 || keyCode === 65){
+    pieceMove(-1);
+  } else if (keyCode === 39 || keyCode === 68){
+    pieceMove(1);
+  } else if (keyCode === 40 || keyCode === 83){
+    pieceDrop(true);
+  }
+});
 
 const grid = createMatrix(8, 8);
 const nextPiece = {
   col: 4,
-  value: 0
+  piece: 0
 }
-let gameover = false;
-let score = 0;
-let chain = 0;
-let dropCount = maxDropCounts;
-let level = 1;
-
-const images = [];
-var loadedImages = 0;
-loadImages();
+var gameStarted = false;
+var gameover;
+var score;
+var chain;
+var dropCount;
+var level;

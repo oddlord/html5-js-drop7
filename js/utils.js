@@ -30,3 +30,48 @@ function sleep(milliseconds){
 function randomIntFromInterval(min, max){
   return Math.floor(Math.random()*(max-min+1)+min);
 }
+
+function getAllDropCombinations(){
+  const combinations = [];
+
+  for (let piece = 1; piece <= 8; piece++){
+    for (let col = 1; col <= 7; col++){
+      combinations.push({
+        col: col,
+        piece: piece === 8 ? solidValue : piece
+      });
+    }
+  }
+
+  return combinations;
+}
+
+function getCellOrigin(i, j){
+  const x = (i-1)*cellWidth + i*cellPadding;
+  const y = upperSectionHeight + j*cellWidth + (j+1)*cellPadding;
+  return [x, y];
+}
+
+function getRandomPiece(onlyNumbers){
+  let max = 8;
+  if (onlyNumbers){
+    max = 7;
+  }
+
+  let piece = randomIntFromInterval(1, max);
+  piece = piece === 8 ? solidValue : piece;
+
+  return piece;
+}
+
+function getPieceImg(piece){
+  if (piece >= 1 && piece <= 7){
+    return images[piece-1];
+  } else if (piece === solidValue){
+    return images[7];
+  } else if (piece === crackedValue){
+    return images[8];
+  } else {
+    throw new Error('Invalid piece ' + piece);
+  }
+}
