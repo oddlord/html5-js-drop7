@@ -2,11 +2,11 @@ const body = document.body;
 const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
-const cellScale = 1/10;
-const cellWidth = Math.min(body.clientWidth, body.clientHeight) * cellScale;
-const cellPadding = cellWidth/30;
-const cellColor = '#28456f';
+const canvasHeightScale = 0.9;
+const gridDropHeightScale = 0.8;
+const cellPaddingScale = 0.033;
 
+const cellColor = '#28456f';
 const backgroundColors = [
   '#95bad7',
   '#afd8b6',
@@ -161,7 +161,7 @@ function nextPieceMove(dir) {
 
 function getCellOrigin(i, j){
   const x = (i-1)*cellWidth + i*cellPadding;
-  const y = j*cellWidth + (j+1)*cellPadding;
+  const y = gridDropYOrigin + j*cellWidth + (j+1)*cellPadding;
   return [x, y];
 }
 
@@ -217,7 +217,7 @@ function drawPieceImg(value, i, j){
 
 function drawGrid(){
   context.fillStyle = cellColor;
-  context.clearRect(0, (cellPadding + cellWidth), (7*cellWidth + 8*cellPadding), (7*cellWidth + 8*cellPadding));
+  context.clearRect(0, gridDropYOrigin + (cellPadding + cellWidth), (7*cellWidth + 8*cellPadding), (7*cellWidth + 8*cellPadding));
 
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
@@ -233,16 +233,14 @@ function drawGrid(){
 }
 
 function drawDropSection(){
-  context.clearRect(0, 0, (7*cellWidth + 8*cellPadding), (cellPadding + cellWidth));
+  context.clearRect(0, gridDropYOrigin, (7*cellWidth + 8*cellPadding), (cellPadding + cellWidth));
   drawPieceImg(nextPiece.value, nextPiece.col, 0);
 }
 
 function canvasInit(){
 
-  const w = 7*cellWidth + 8*cellPadding;
-  canvas.width = w;
-  const h = 8*cellWidth + 9*cellPadding;
-  canvas.height = h;
+  canvas.width = gridWidth;
+  canvas.height = canvasHeight;
 
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
@@ -317,6 +315,23 @@ function startGame(){
   nextPieceReset();
 }
 
+function setDimensions(){
+  canvasHeight = body.clientHeight * canvasHeightScale;
+  gridDropHeight = canvasHeight * gridDropHeightScale;
+  gridDropYOrigin = canvasHeight * (1-gridDropHeightScale);
+  cellWidth = gridDropHeight / (8 + cellPaddingScale*9);
+  cellPadding = cellWidth * cellPaddingScale;
+  gridWidth = cellWidth*7 + cellPadding*8;
+}
+
+var canvasHeight;
+var gridDropHeight;
+var gridDropYOrigin;
+var cellWidth;
+var cellPadding;
+var gridWidth;
+
+setDimensions();
 canvasInit();
 
 const grid = createMatrix(8, 8);
@@ -325,8 +340,8 @@ const nextPiece = {
   value: 1
 }
 
-let lastBackground = '#fff';
+var lastBackground = '#fff';
 
 const images = [];
-let loadedImages = 0;
+var loadedImages = 0;
 loadImages();
