@@ -2,10 +2,12 @@ const body = document.body;
 const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
-const canvasHeightScale = 0.9;
-const gridDropHeightScale = 0.8;
-const cellPaddingScale = 0.033;
-const scoreHeightScale = 0.6;
+const canvasHeightScale = 0.9;        // WRT document body
+const gridDropHeightScale = 0.8;      // WRT canvas
+const cellPaddingScale = 0.033;       // WRT cell width
+const scoreSectionHeightScale = 0.8;  // WRT upper part (drop counter excluded)
+const scoreVPaddingScale = 0.25;      // WRT score section
+const dropCounterPaddingScale = 0.1;  // WRT drop counter width
 
 const cellColor = '#28456f';
 const backgroundColors = [
@@ -24,6 +26,8 @@ const crackedValue = 100;
 
 const minStartingPieces = 11;
 const maxStartingPieces = 21;
+
+const maxDropCounts = 30;
 
 function applyGravity(){
   for (let i = 1; i <= 7; i++){
@@ -142,7 +146,68 @@ function checkMatches(){
   }
 }
 
-function pieceDrop() {
+function gameOver(){
+  gameover = true;
+  drawScore();
+}
+
+function checkGameOver(){
+  let gameover = false;
+  for (let i = 1; i <= 7; i++){
+    if (grid[i][0] !== 0){
+      gameover = true;
+      break;
+    }
+  }
+
+  if (gameover){
+    gameOver();
+  }
+
+  gameover = true;
+  colsLoop: for (let i = 1; i <= 7; i++){
+    for (let j = 1; j <= 7; j++){
+      if (grid[i][j] === 0){
+        gameover = false;
+        break colsLoop;
+      }
+    }
+  }
+
+  if (gameover){
+    gameOver();
+  }
+}
+
+function nextLevel(){
+  level++;
+  score += 7000;
+
+  for (let i = 1; i <= 7; i++){
+    for (let j = 1; j <= 7; j++){
+      grid[i][j-1] = grid[i][j];
+    }
+    grid[i][7] = solidValue;
+  }
+}
+
+function checkEmptyGrid(){
+  let emptyGrid = true;
+  colsLoop: for (let i = 1; i <= 7; i++){
+    for (let j = 1; j <= 7; j++){
+      if (grid[i][j] !== 0){
+        emptyGrid = false;
+        break colsLoop;
+      }
+    }
+  }
+
+  if (emptyGrid){
+    score += 70000;
+  }
+}
+
+function pieceDrop(playerDrop) {
   if (grid[nextPiece.col][1] !== 0){
     return;
   }
@@ -150,11 +215,30 @@ function pieceDrop() {
   for (let j = 7; j >= 1; j--){
     if (grid[nextPiece.col][j] === 0){
       grid[nextPiece.col][j] = nextPiece.value;
-      drawGrid();
-      checkMatches();
-      nextPieceReset();
+      nextPiece.value = 0;
       break;
     }
+  }
+
+  if (playerDrop){
+    dropCount--;
+    drawDropCounter();
+    if(dropCount === 0){
+      dropCount = maxDropCounts;
+      nextLevel();
+      drawDropCounter();
+    }
+  }
+
+  drawDropSection();
+  drawGrid();
+
+  checkGameOver();
+  checkMatches();
+  checkEmptyGrid();
+
+  if (!gameover){
+    nextPieceReset();
   }
 }
 
@@ -224,9 +308,12 @@ function drawGrid(){
 
   context.fillStyle = cellColor;
   for (let i = 1; i <= 7; i++){
-    for (let j = 1; j <= 7; j++){
+    for (let j = 0; j <= 7; j++){
       const [x, y] = getCellOrigin(i, j);
-      context.fillRect(x, y, cellWidth, cellWidth);
+
+      if (j !== 0){
+        context.fillRect(x, y, cellWidth, cellWidth);
+      }
 
       const value = grid[i][j];
       if (value !== 0){
@@ -238,7 +325,44 @@ function drawGrid(){
 
 function drawDropSection(){
   context.clearRect(0, upperSectionHeight, gridWidth, dropSectionHeight);
-  drawPieceImg(nextPiece.value, nextPiece.col, 0);
+  if (nextPiece.value !== 0){
+    drawPieceImg(nextPiece.value, nextPiece.col, 0);
+  }
+}
+
+function drawScore(){
+  context.clearRect(0, 0, gridWidth, scoreSectionHeight);
+  const scoreFontHeight = gameover ? scoreHeight/2 : scoreHeight;
+  context.font = scoreFontHeight + 'px Arial';
+  context.fillStyle = cellColor;
+  context.textAlign = 'center';
+  context.textBaseline = 'top';
+  const scoreText = gameover ? 'GAME OVER! ' + score : score;
+  context.fillText(scoreText, gridWidth/2, 0);
+}
+
+function drawDropCounter(){
+  context.clearRect(0, scoreSectionHeight, gridWidth, dropCounterWidth + levelHeight);
+
+  context.fillStyle = cellColor;
+  context.strokeStyle = cellColor;
+  for (let i = 1; i <= maxDropCounts; i++){
+    context.beginPath();
+    const radius = dropCounterWidth/2;
+    const originX = (i-1)*dropCounterWidth + i*dropCounterPadding + radius;
+    const originY = scoreSectionHeight + radius;
+    context.arc(originX, originY, radius, 0, 2*Math.PI, false);
+    if (i <= dropCount){
+      context.fill();
+    } else {
+      context.stroke();
+    }
+  }
+
+  context.font = levelHeight + 'px Arial';
+  context.textAlign = 'left';
+  context.textBaseline = 'top'
+  context.fillText('LEVEL '+level, 0, scoreSectionHeight + dropCounterWidth);
 }
 
 function canvasInit(){
@@ -264,7 +388,7 @@ function getRandomPiece(onlyNumbers){
 
 function nextPieceReset(){
   chain = 0;
-  scoreUpdate();
+  drawScore();
 
   nextPiece.col = 4;
   nextPiece.value = getRandomPiece(false);
@@ -306,7 +430,7 @@ function gridInit(){
 
     nextPiece.col = combinations[combinationIndex].col;
     nextPiece.value = combinations[combinationIndex].value;
-    pieceDrop();
+    pieceDrop(false);
 
     if (score > 0){
       combinations.splice(combinationIndex, 1);
@@ -319,15 +443,6 @@ function gridInit(){
   }
 }
 
-function scoreUpdate(){
-  context.clearRect(0, 0, gridWidth, scoreHeight);
-  context.font = scoreHeight + 'px Arial';
-  context.fillStyle = cellColor;
-  context.textAlign = 'center';
-  context.textBaseline = 'top'
-  context.fillText(score, gridWidth/2, 0);
-}
-
 function imageLoadPost(){
   loadedImages++;
   if (loadedImages === images.length){
@@ -337,17 +452,22 @@ function imageLoadPost(){
 
 function startGame(){
   document.addEventListener('keydown', event => {
+    if (gameover){
+      return;
+    }
+
     const keyCode = event.keyCode;
     if (keyCode === 37 || keyCode === 65){
       pieceMove(-1);
     } else if (keyCode === 39 || keyCode === 68){
       pieceMove(1);
     } else if (keyCode === 40 || keyCode === 83){
-      pieceDrop();
+      pieceDrop(true);
     }
   });
 
   gridInit();
+  drawDropCounter();
   nextPieceReset();
   drawGrid();
 }
@@ -363,9 +483,12 @@ function setDimensions(){
   gridWidth = cellWidth*7 + cellPadding*8;
   dropSectionHeight = cellPadding + cellWidth;
 
-  dropCounterWidth = gridWidth / 30;
-  scoreHeight = (upperSectionHeight - dropCounterWidth) * scoreHeightScale;
-  levelHeight = (upperSectionHeight - dropCounterWidth) * (1-scoreHeightScale);
+  dropCounterWidth = gridWidth / (30 + dropCounterPaddingScale*31);
+  dropCounterPadding = dropCounterWidth * dropCounterPaddingScale;
+  scoreSectionHeight = (upperSectionHeight - dropCounterWidth) * scoreSectionHeightScale;
+  scoreHeight = scoreSectionHeight * (1-scoreVPaddingScale);
+  scoreVPadding = scoreSectionHeight * scoreVPaddingScale;
+  levelHeight = (upperSectionHeight - dropCounterWidth) * (1-scoreSectionHeightScale);
 }
 
 var canvasHeight;
@@ -379,7 +502,10 @@ var gridWidth;
 var dropSectionHeight;
 
 var dropCounterWidth;
+var dropCounterPadding;
+var scoreSectionHeight;
 var scoreHeight;
+var scoreVPadding;
 var levelHeight;
 
 setDimensions();
@@ -388,10 +514,13 @@ canvasInit();
 const grid = createMatrix(8, 8);
 const nextPiece = {
   col: 4,
-  value: 1
+  value: 0
 }
+let gameover = false;
 let score = 0;
 let chain = 0;
+let dropCount = maxDropCounts;
+let level = 1;
 
 const images = [];
 var loadedImages = 0;
