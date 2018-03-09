@@ -2,8 +2,9 @@ const body = document.body;
 const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
-const cellWidth = 50;
-const cellPadding = 2;
+const cellScale = 1/10;
+const cellWidth = Math.min(body.clientWidth, body.clientHeight) * cellScale;
+const cellPadding = cellWidth/30;
 const cellColor = '#3A5086';
 
 const backgroundColors = [
