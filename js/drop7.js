@@ -280,20 +280,41 @@ function nextPieceReset(){
   drawDropSection();
 }
 
+function createAllDropCombinations(){
+  const combinations = [];
+
+  for (let piece = 1; piece <= 8; piece++){
+    for (let col = 1; col <= 7; col++){
+      combinations.push({
+        col: col,
+        value: piece === 8 ? solidValue : piece
+      });
+    }
+  }
+
+  return combinations;
+}
+
 function gridInit(){
   let piecesToDrop = randomIntFromInterval(minStartingPieces, maxStartingPieces);
-  for (; piecesToDrop > 0; piecesToDrop--){
-    const piece = getRandomPiece(false);
-    let col;
-    do {
-      col = randomIntFromInterval(1, 7);
-    } while (grid[col][1] !== 0);
+  let combinations = createAllDropCombinations();
+  while (piecesToDrop > 0 && combinations.length > 0){
+    const combinationIndex = randomIntFromInterval(0, combinations.length-1);
 
-    for (let j = 7; j >= 1; j--){
-      if (grid[col][j] === 0){
-        grid[col][j] = piece;
-        break;
-      }
+    const gridCopy = createMatrix(grid.length, grid[0].length);
+    copyMatrix(grid, gridCopy);
+
+    nextPiece.col = combinations[combinationIndex].col;
+    nextPiece.value = combinations[combinationIndex].value;
+    pieceDrop();
+
+    if (score > 0){
+      combinations.splice(combinationIndex, 1);
+      score = 0;
+      copyMatrix(gridCopy, grid);
+    } else {
+      combinations = createAllDropCombinations();
+      piecesToDrop--;
     }
   }
 }
@@ -327,9 +348,8 @@ function startGame(){
   });
 
   gridInit();
-  checkMatches();
-  drawGrid();
   nextPieceReset();
+  drawGrid();
 }
 
 function setDimensions(){
