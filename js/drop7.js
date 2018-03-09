@@ -5,14 +5,18 @@ const context = canvas.getContext('2d');
 const canvasHeightScale = 0.9;
 const gridDropHeightScale = 0.8;
 const cellPaddingScale = 0.033;
+const scoreHeightScale = 0.6;
 
 const cellColor = '#28456f';
 const backgroundColors = [
-  '#95bad7',
-  '#afd8b6',
-  '#f6f6f6',
-  '#eaa3a9',
-  '#f5cfa0'
+  '#488557',  // 1 piece color
+  '#b19438',  // 2 piece color
+  '#b07b39',  // 3 piece color
+  '#a23643',  // 4 piece color
+  '#a4528e',  // 5 piece color
+  '#3692af',  // 6 piece color
+  '#2a5e8b',  // 7 piece color
+  '#d8e4ea'   // solid piece color
 ];
 
 const solidValue = 200;
@@ -108,6 +112,7 @@ function isPieceAMatch(i, j){ // check if a piece at given coords is a match
 }
 
 function checkMatches(){
+  chain++;
   const matchedPieces = [];
 
   for (let i = 1; i <= 7; i++){
@@ -128,6 +133,7 @@ function checkMatches(){
 
   if (matchedPieces.length > 0){
     for (let matchedPiece of matchedPieces){
+      score += Math.floor(7 * (Math.pow(chain, 2.5)));
       grid[matchedPiece.i][matchedPiece.j] = 0;
       breakNeighbours(matchedPiece.i, matchedPiece.j);
     }
@@ -136,32 +142,30 @@ function checkMatches(){
   }
 }
 
-function nextPieceDrop() {
-  const i = nextPiece.col;
-
-  if (grid[i][1] !== 0){
+function pieceDrop() {
+  if (grid[nextPiece.col][1] !== 0){
     return;
   }
 
   for (let j = 7; j >= 1; j--){
-    if (grid[i][j] === 0){
-      grid[i][j] = nextPiece.value;
+    if (grid[nextPiece.col][j] === 0){
+      grid[nextPiece.col][j] = nextPiece.value;
       drawGrid();
-      nextPieceReset();
       checkMatches();
+      nextPieceReset();
       break;
     }
   }
 }
 
-function nextPieceMove(dir) {
+function pieceMove(dir) {
   nextPiece.col = clamp(nextPiece.col + dir, 1, 7);
   drawDropSection();
 }
 
 function getCellOrigin(i, j){
   const x = (i-1)*cellWidth + i*cellPadding;
-  const y = gridDropYOrigin + j*cellWidth + (j+1)*cellPadding;
+  const y = upperSectionHeight + j*cellWidth + (j+1)*cellPadding;
   return [x, y];
 }
 
@@ -216,9 +220,9 @@ function drawPieceImg(value, i, j){
 }
 
 function drawGrid(){
-  context.fillStyle = cellColor;
-  context.clearRect(0, gridDropYOrigin + (cellPadding + cellWidth), (7*cellWidth + 8*cellPadding), (7*cellWidth + 8*cellPadding));
+  context.clearRect(0, upperSectionHeight + dropSectionHeight, gridWidth, gridWidth);
 
+  context.fillStyle = cellColor;
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
       const [x, y] = getCellOrigin(i, j);
@@ -233,7 +237,7 @@ function drawGrid(){
 }
 
 function drawDropSection(){
-  context.clearRect(0, gridDropYOrigin, (7*cellWidth + 8*cellPadding), (cellPadding + cellWidth));
+  context.clearRect(0, upperSectionHeight, gridWidth, dropSectionHeight);
   drawPieceImg(nextPiece.value, nextPiece.col, 0);
 }
 
@@ -259,15 +263,19 @@ function getRandomPiece(onlyNumbers){
 }
 
 function nextPieceReset(){
-  let backgroundColor;
-  do {
-    backgroundColor = backgroundColors[randomIntFromInterval(0, backgroundColors.length-1)];
-  } while (backgroundColor === lastBackground);
-  lastBackground = backgroundColor;
-  body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
+  chain = 0;
+  scoreUpdate();
 
   nextPiece.col = 4;
   nextPiece.value = getRandomPiece(false);
+
+  let backgroundColor;
+  if (nextPiece.value === solidValue){
+    backgroundColor = backgroundColors[7];
+  } else {
+    backgroundColor = backgroundColors[nextPiece.value - 1];
+  }
+  body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
 
   drawDropSection();
 }
@@ -290,6 +298,15 @@ function gridInit(){
   }
 }
 
+function scoreUpdate(){
+  context.clearRect(0, 0, gridWidth, scoreHeight);
+  context.font = scoreHeight + 'px Arial';
+  context.fillStyle = cellColor;
+  context.textAlign = 'center';
+  context.textBaseline = 'top'
+  context.fillText(score, gridWidth/2, 0);
+}
+
 function imageLoadPost(){
   loadedImages++;
   if (loadedImages === images.length){
@@ -301,11 +318,11 @@ function startGame(){
   document.addEventListener('keydown', event => {
     const keyCode = event.keyCode;
     if (keyCode === 37 || keyCode === 65){
-      nextPieceMove(-1);
+      pieceMove(-1);
     } else if (keyCode === 39 || keyCode === 68){
-      nextPieceMove(1);
+      pieceMove(1);
     } else if (keyCode === 40 || keyCode === 83){
-      nextPieceDrop();
+      pieceDrop();
     }
   });
 
@@ -318,18 +335,32 @@ function startGame(){
 function setDimensions(){
   canvasHeight = body.clientHeight * canvasHeightScale;
   gridDropHeight = canvasHeight * gridDropHeightScale;
-  gridDropYOrigin = canvasHeight * (1-gridDropHeightScale);
+  upperSectionHeight = canvasHeight * (1-gridDropHeightScale);
+
   cellWidth = gridDropHeight / (8 + cellPaddingScale*9);
   cellPadding = cellWidth * cellPaddingScale;
+
   gridWidth = cellWidth*7 + cellPadding*8;
+  dropSectionHeight = cellPadding + cellWidth;
+
+  dropCounterWidth = gridWidth / 30;
+  scoreHeight = (upperSectionHeight - dropCounterWidth) * scoreHeightScale;
+  levelHeight = (upperSectionHeight - dropCounterWidth) * (1-scoreHeightScale);
 }
 
 var canvasHeight;
 var gridDropHeight;
-var gridDropYOrigin;
+var upperSectionHeight;
+
 var cellWidth;
 var cellPadding;
+
 var gridWidth;
+var dropSectionHeight;
+
+var dropCounterWidth;
+var scoreHeight;
+var levelHeight;
 
 setDimensions();
 canvasInit();
@@ -339,8 +370,8 @@ const nextPiece = {
   col: 4,
   value: 1
 }
-
-var lastBackground = '#fff';
+let score = 0;
+let chain = 0;
 
 const images = [];
 var loadedImages = 0;
