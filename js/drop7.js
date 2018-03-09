@@ -5,7 +5,7 @@ const context = canvas.getContext('2d');
 const cellScale = 1/10;
 const cellWidth = Math.min(body.clientWidth, body.clientHeight) * cellScale;
 const cellPadding = cellWidth/30;
-const cellColor = '#3A5086';
+const cellColor = '#28456f';
 
 const backgroundColors = [
   '#95bad7',
