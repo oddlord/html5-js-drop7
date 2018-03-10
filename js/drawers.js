@@ -1,3 +1,9 @@
+function getCellOrigin(i, j){
+  const x = playAreaX + (i-1)*cellWH + i*cellPad;
+  const y = dropY + j*cellWH + (j+1)*cellPad;
+  return [x, y];
+}
+
 function drawPieceImg(value, i, j){
   const img = getPieceImg(value);
   const [x, y] = getCellOrigin(i, j);
@@ -8,11 +14,11 @@ function drawPieceImg(value, i, j){
   // and here
   // https://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
 
-  context.drawImage(img, x, y, cellWidth, cellWidth);
+  context.drawImage(img, x, y, cellWH, cellWH);
 }
 
 function drawGrid(){
-  context.clearRect(0, upperSectionHeight + dropSectionHeight, gridWidth, gridWidth);
+  context.clearRect(gridX, gridY, gridWH, gridWH);
 
   context.fillStyle = cellColor;
   for (let i = 1; i <= 7; i++){
@@ -20,7 +26,7 @@ function drawGrid(){
       const [x, y] = getCellOrigin(i, j);
 
       if (j !== 0){
-        context.fillRect(x, y, cellWidth, cellWidth);
+        context.fillRect(x, y, cellWH, cellWH);
       }
 
       const value = grid[i][j];
@@ -31,44 +37,61 @@ function drawGrid(){
   }
 }
 
-function drawDropSection(){
-  context.clearRect(0, upperSectionHeight, gridWidth, dropSectionHeight);
+function drawDrop(){
+  context.clearRect(dropX, dropY, gridWH, dropH);
+
   if (nextPiece.piece !== 0){
     drawPieceImg(nextPiece.piece, nextPiece.col, 0);
   }
 }
 
 function drawScore(){
-  context.clearRect(0, 0, gridWidth, scoreSectionHeight);
-  const scoreFontHeight = gameover ? scoreHeight/2 : scoreHeight;
-  context.font = scoreFontHeight + 'px Arial';
+  context.clearRect(scoreX, scoreY, gridWH, scoreH);
+
+  const scoreFontH = gameover ? scoreH/2 : scoreH;
+  context.font = scoreFontH + 'px Arial';
   context.fillStyle = cellColor;
   context.textAlign = 'center';
   context.textBaseline = 'top';
   const scoreText = gameover ? 'GAME OVER! ' + score : score;
-  context.fillText(scoreText, gridWidth/2, 0);
+  context.fillText(scoreText, gridWH/2, scoreY);
 }
 
-function drawDropCounter(){
-  context.clearRect(0, scoreSectionHeight, gridWidth, dropCounterWidth + levelHeight);
+function drawDropCount(){
+  context.clearRect(dropCountX, dropCountY-scoreVPad, gridWH, dropCountWH+scoreVPad);
 
   context.fillStyle = cellColor;
+  context.lineWidth = dropCountBorderW;
   context.strokeStyle = cellColor;
-  for (let i = 1; i <= maxDropCounts; i++){
+  const radius = dropCountWH/2;
+  const dropCountCircleY = dropCountY + radius;
+  for (let i = 1; i <= getMaxDrops(); i++){
     context.beginPath();
-    const radius = dropCounterWidth/2;
-    const originX = (i-1)*dropCounterWidth + i*dropCounterPadding + radius;
-    const originY = scoreSectionHeight + radius;
-    context.arc(originX, originY, radius, 0, 2*Math.PI, false);
+    const dropCountCircleX = dropCountX + (i-1)*dropCountWH + i*dropCountPad + radius;
+    context.arc(dropCountCircleX, dropCountCircleY, radius, 0, 2*Math.PI, false);
     if (i <= dropCount){
       context.fill();
     } else {
       context.stroke();
     }
   }
+}
 
-  context.font = levelHeight + 'px Arial';
+function drawLevel(){
+  context.clearRect(levelX, levelY, gridWH, levelH);
+
+  context.font = levelH + 'px Arial';
   context.textAlign = 'left';
   context.textBaseline = 'top'
-  context.fillText('LEVEL '+level, 0, scoreSectionHeight + dropCounterWidth);
+  context.fillText('LEVEL '+level, levelX, levelY);
+}
+
+function drawMode(){
+  context.clearRect(modeX, modeY, gridWH, modeH);
+
+  context.font = modeH + 'px Arial';
+  context.fillStyle = cellColor;
+  context.textAlign = 'right';
+  context.textBaseline = 'top';
+  context.fillText('Mode: '+mode, gridWH, modeY);
 }

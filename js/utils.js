@@ -46,12 +46,6 @@ function getAllDropCombinations(){
   return combinations;
 }
 
-function getCellOrigin(i, j){
-  const x = (i-1)*cellWidth + i*cellPadding;
-  const y = upperSectionHeight + j*cellWidth + (j+1)*cellPadding;
-  return [x, y];
-}
-
 function getRandomPiece(onlyNumbers){
   let max = 8;
   if (onlyNumbers){
@@ -73,5 +67,15 @@ function getPieceImg(piece){
     return images[8];
   } else {
     throw new Error('Invalid piece ' + piece);
+  }
+}
+
+function getMaxDrops(){
+  if (mode === 'classic' || mode === 'sequence'){
+    return classicSequenceDrops;
+  } else if (mode === 'blitz'){
+    return blitzDrops;
+  } else {
+    throw new Error('Invalid game mode ' + mode);
   }
 }

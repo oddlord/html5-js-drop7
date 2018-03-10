@@ -2,8 +2,8 @@ const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
 function canvasInit(){
-  canvas.width = gridWidth;
-  canvas.height = canvasHeight;
+  canvas.width = gridWH;
+  canvas.height = canvasH;
 
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
@@ -45,4 +45,3 @@ canvasInit();
 
 const images = [];
 var loadedImages = 0;
-loadImages();

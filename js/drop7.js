@@ -1,23 +1,3 @@
-const cellColor = '#28456f';
-const backgroundColors = [
-  '#488557',  // 1 piece color
-  '#b19438',  // 2 piece color
-  '#b07b39',  // 3 piece color
-  '#a23643',  // 4 piece color
-  '#a4528e',  // 5 piece color
-  '#3692af',  // 6 piece color
-  '#2a5e8b',  // 7 piece color
-  '#d8e4ea'   // solid piece color
-];
-
-const solidValue = 200;
-const crackedValue = 100;
-
-const minStartingPieces = 11;
-const maxStartingPieces = 21;
-
-const maxDropCounts = 30;
-
 function applyGravity(){
   for (let i = 1; i <= 7; i++){
     for (let j = 7; j >= 1; j--){
@@ -173,6 +153,8 @@ function nextLevel(){
   level++;
   score += 7000;
 
+  drawLevel();
+
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
       grid[i][j-1] = grid[i][j];
@@ -212,15 +194,15 @@ function pieceDrop(playerDrop) {
 
   if (playerDrop){
     dropCount--;
-    drawDropCounter();
+    drawDropCount();
     if(dropCount === 0){
-      dropCount = maxDropCounts;
+      dropCount = getMaxDrops();
       nextLevel();
-      drawDropCounter();
+      drawDropCount();
     }
   }
 
-  drawDropSection();
+  drawDrop();
   drawGrid();
 
   checkGameOver();
@@ -238,7 +220,7 @@ function pieceDrop(playerDrop) {
 
 function pieceMove(dir) {
   nextPiece.col = clamp(nextPiece.col + dir, 1, 7);
-  drawDropSection();
+  drawDrop();
 }
 
 function nextPieceReset(){
@@ -253,7 +235,7 @@ function nextPieceReset(){
   }
   document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
 
-  drawDropSection();
+  drawDrop();
 }
 
 function gridReset(){
@@ -285,13 +267,17 @@ function startGame(){
   gameStarted = true;
   gameover = false;
 
+  mode = 'classic';
+
   score = 0;
   chain = 0;
-  dropCount = maxDropCounts;
+  dropCount = getMaxDrops();
   level = 1;
 
+  drawMode();
   drawScore();
-  drawDropCounter();
+  drawDropCount();
+  drawLevel();
 
   drawGrid();
   gridReset();
@@ -322,7 +308,10 @@ const nextPiece = {
 }
 var gameStarted = false;
 var gameover;
+var mode;
 var score;
 var chain;
 var dropCount;
 var level;
+
+loadImages();
