@@ -26,12 +26,12 @@ const blitzDrops = 5;
 
 const canvasHScale = 0.9; // WRT document body
 
-const playAreaHScale = 0.8; // WRT canvas height
+const playAreaHScale = 0.75; // WRT canvas height
 
 // All these must sum to 1
 const modeHScale = 0.15;    // WRT upper section height
-const scoreHScale = 0.6;    // WRT upper section height
-const scoreVPadScale = 0.1; // WRT upper section height
+const scoreHScale = 0.5;    // WRT upper section height
+const scoreVPadScale = 0.2; // WRT upper section height
 const levelHScale = 0.15;   // WRT upper section height
 
 const cellPadScale = 0.033; // WRT cell width
