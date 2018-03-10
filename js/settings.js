@@ -1,9 +1,10 @@
 // Misc settings ---------------------
-const cellBlue = '#284c7c';  // used for grid cells
-const darkBlue = '#223f5f';   // used for text and other elements
-const lightBlue = '#3a84c1';  // used for gameover BG
-const buttonGreen = '#65be7a' // used for buttons
-const backgroundColors = [
+const cellBlue = '#284c7c';         // used for grid cells
+const darkBlue = '#223f5f';         // used for text and other elements
+const lightBlue = '#3a84c1';        // used for gameover BG
+const newHighscoreBlue = '#57cbf0'; // used for the "New Highscore" text
+const buttonGreen = '#65be7a';      // used for buttons
+const backgroundColors = [          // used for game BG (depends on current piece)
   '#488557',  // 1 piece color
   '#b19438',  // 2 piece color
   '#b07b39',  // 3 piece color
@@ -61,10 +62,11 @@ const modeBestWScale = 0.35; // WRT grid width
 // All these must sum to 1
 const gameoverScoreTextHScale = 0.05;   // WTR gameover lower section height
 const gameoverScoreHScale = 0.15;       // WTR gameover lower section height
-const gameoverScoreVPadScale = 0.1;     // WTR gameover lower section height
-const gameoverStatsHScale = 0.25;        // WTR gameover lower section height
+const gameoverScoreNewHScale = 0.05;    // WTR gameover lower section height
+const gameoverScoreVPadScale = 0.05;    // WTR gameover lower section height
+const gameoverStatsHScale = 0.25;       // WTR gameover lower section height
 const gameoverStatsVPadScale = 0.1;     // WTR gameover lower section height
-const gameoverButtonsHScale = 0.3;     // WTR gameover lower section height
+const gameoverButtonsHScale = 0.3;      // WTR gameover lower section height
 const gameoverButtonsVPadScale = 0.05;  // WTR gameover lower section height
 
 const gameoverStatPadScale = 0.4; // WRT gameover stat height
@@ -98,11 +100,12 @@ function setDimensions(){
   modeBestW = gridWH * modeBestWScale;
   modeBestTextH = modeBestH / 2;
 
-  gameoverImgNonWritableH = (500/1080)*gridWH;
+  gameoverImgNonWritableH = (450/1080)*gridWH;
   gameoverLowerSectionH = canvasH - gameoverImgNonWritableH;
 
   gameoverScoreTextH = gameoverLowerSectionH * gameoverScoreTextHScale;
   gameoverScoreH = gameoverLowerSectionH * gameoverScoreHScale;
+  gameoverScoreNewH = gameoverLowerSectionH * gameoverScoreNewHScale;
   gameoverScoreVPad = gameoverLowerSectionH * gameoverScoreVPadScale;
   gameoverStatsH = gameoverLowerSectionH * gameoverStatsHScale;
   gameoverStatsVPad = gameoverLowerSectionH * gameoverStatsVPadScale;
@@ -146,6 +149,7 @@ var gameoverLowerSectionH;
 
 var gameoverScoreTextH;
 var gameoverScoreH;
+var gameoverScoreNewH;
 var gameoverScoreVPad;
 var gameoverStatsH;
 var gameoverStatsVPad;
@@ -204,14 +208,18 @@ function setOrigins(){
   gameoverScoreX = gameoverX + 0;
   gameoverScoreY = gameoverY + gameoverImgNonWritableH + gameoverScoreTextH + 0;
 
+  gameoverScoreNewX = gameoverX + 0;
+  gameoverScoreNewY = gameoverY + gameoverImgNonWritableH + gameoverScoreTextH +
+                      gameoverScoreH + 0;
+
   gameoverStatsX = gameoverX + 0;
   gameoverStatsY = gameoverY + gameoverImgNonWritableH + gameoverScoreTextH +
-                   gameoverScoreH + gameoverScoreVPad + 0;
+                   gameoverScoreH + gameoverScoreNewH + gameoverScoreVPad + 0;
 
   gameoverButtonsX = gameoverX + 0;
   gameoverButtonsY = gameoverY + gameoverImgNonWritableH + gameoverScoreTextH +
-                     gameoverScoreH + gameoverScoreVPad + gameoverStatsH +
-                     gameoverStatsVPad + 0;
+                     gameoverScoreH + gameoverScoreNewH + gameoverScoreVPad +
+                     gameoverStatsH + gameoverStatsVPad + 0;
 
   gameoverStatModeX = gameoverStatsX + 0;
   gameoverStatModeY = gameoverStatsY + 0;
@@ -273,6 +281,9 @@ var gameoverScoreTextY;
 
 var gameoverScoreX;
 var gameoverScoreY;
+
+var gameoverScoreNewX;
+var gameoverScoreNewY;
 
 var gameoverStatsX;
 var gameoverStatsY;

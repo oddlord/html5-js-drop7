@@ -100,3 +100,30 @@ function getFormattedScore(unformattedScore){
 
   return formattedScore;
 }
+
+function getAvgScores(){
+  let prevAvgScore = 0;
+  let prevScoresSum = 0;
+  for (let i = 0; i < scores.length - 1; i++){
+    prevScoresSum += scores[i];
+  }
+  if (scores.length - 1 > 0){
+    prevAvgScore = Math.floor(prevScoresSum / (scores.length - 1));
+  }
+
+  const newAvgScore = Math.floor((prevScoresSum+score) / scores.length);
+
+  return[prevAvgScore, newAvgScore];
+}
+
+function isNewHighscore(){
+  let isHighscore = true;
+  for (let i = 0; i < scores.length - 1; i++){
+    if (scores[i] >= score){
+      isHighscore = false;
+      break;
+    }
+  }
+
+  return isHighscore;
+}

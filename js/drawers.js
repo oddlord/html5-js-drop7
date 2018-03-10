@@ -150,7 +150,14 @@ function drawGameover(){
   context.font = gameoverScoreH + 'px Arial';
   context.fillText(getFormattedScore(score), gridWH/2, gameoverScoreY);
 
+  if (isNewHighscore()){
+    context.font = gameoverScoreNewH + 'px Arial';
+    context.fillStyle = newHighscoreBlue;
+    context.fillText('NEW HIGH SCORE!', gridWH/2, gameoverScoreNewY);
+  }
+
   context.font = gameoverStatH + 'px Arial';
+  context.fillStyle = 'white';
 
   context.textAlign = 'right';
   context.fillText('Mode:', gridWH/2, gameoverStatModeY);
@@ -167,21 +174,12 @@ function drawGameover(){
   context.textAlign = 'left';
   context.fillText(' '+level, gridWH/2, gameoverStatLevelY);
 
-  let prevAvgScore = 0;
-  let prevScoresSum = 0;
-  for (let i = 0; i < scores.length - 1; i++){
-    prevScoresSum += scores[i];
-  }
-  if (scores.length - 1 > 0){
-    prevAvgScore = Math.floor(prevScoresSum / (scores.length - 1));
-  }
+  [prevAvgScore, newAvgScore] = getAvgScores();
 
   context.textAlign = 'right';
   context.fillText('Prev. Avg. Score:', gridWH/2, gameoverStatPrevScoreY);
   context.textAlign = 'left';
   context.fillText(' '+getFormattedScore(prevAvgScore), gridWH/2, gameoverStatPrevScoreY);
-
-  const newAvgScore = Math.floor((prevScoresSum+score) / scores.length);
 
   context.textAlign = 'right';
   context.fillText('New Avg. Score:', gridWH/2, gameoverStatNewScoreY);
