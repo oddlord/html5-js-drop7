@@ -59,15 +59,19 @@ function getRandomPiece(onlyNumbers){
 }
 
 function getPieceImg(piece){
+  let imgName;
+
   if (piece >= 1 && piece <= 7){
-    return images[piece-1];
+    imgName = piece + 'piece.png';
   } else if (piece === solidValue){
-    return images[7];
+    imgName = 'solid.png';
   } else if (piece === crackedValue){
-    return images[8];
+    imgName = 'cracked.png';
   } else {
     throw new Error('Invalid piece ' + piece);
   }
+
+  return images[imgName];
 }
 
 function getMaxDrops(){
@@ -78,4 +82,21 @@ function getMaxDrops(){
   } else {
     throw new Error('Invalid game mode ' + mode);
   }
+}
+
+function getFormattedScore(){
+  let formattedScore = '';
+  let scoreStr = '' + score;
+  let sinceLastComma = 0;
+
+  for (let i = scoreStr.length-1; i >= 0; i--){
+    if (sinceLastComma === 3){
+      formattedScore = ',' + formattedScore;
+      sinceLastComma = 0;
+    }
+    formattedScore = scoreStr.charAt(i) + formattedScore;
+    sinceLastComma++;
+  }
+
+  return formattedScore;
 }

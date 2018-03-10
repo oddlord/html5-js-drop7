@@ -10,38 +10,40 @@ function canvasInit(){
 }
 
 function loadImages(){
-  for (let i = 1; i <= 7; i++){
-    let img = new Image();
-    img.src = 'img/' + i + 'piece.png';
-    img.onload = function(){
+  for (let i = 0; i < imagesSrc.length; i++){
+    const img = new Image();
+    img.src = 'img/' + imagesSrc[i];
+    images[imagesSrc[i]] = img;
+  }
+
+  for (let imgName in images){
+    images[imgName].onload = function(){
       imageLoadPost();
     }
-    images.push(img);
   }
-
-  const solid = new Image();
-  solid.src = 'img/solid.png';
-  solid.onload = function(){
-    imageLoadPost();
-  }
-  images.push(solid);
-
-  const cracked = new Image();
-  cracked.src = 'img/cracked.png';
-  cracked.onload = function(){
-    imageLoadPost();
-  }
-  images.push(cracked);
 }
 
 function imageLoadPost(){
   loadedImages++;
-  if (loadedImages === images.length){
+  if (loadedImages === Object.keys(images).length){
     startGame();
   }
 }
 
 canvasInit();
 
-const images = [];
+const imagesSrc = [
+  piecesImgNames[0],
+  piecesImgNames[1],
+  piecesImgNames[2],
+  piecesImgNames[3],
+  piecesImgNames[4],
+  piecesImgNames[5],
+  piecesImgNames[6],
+  solidImgName,
+  crackedImgName,
+  gameoverImgName
+]
+
+const images = {};
 var loadedImages = 0;

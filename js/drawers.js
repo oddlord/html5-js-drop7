@@ -17,52 +17,32 @@ function drawPieceImg(value, i, j){
   context.drawImage(img, x, y, cellWH, cellWH);
 }
 
-function drawGrid(){
-  context.clearRect(gridX, gridY, gridWH, gridWH);
+function drawMode(){
+  context.clearRect(modeX, modeY, gridWH, modeH);
 
-  context.fillStyle = cellColor;
-  for (let i = 1; i <= 7; i++){
-    for (let j = 0; j <= 7; j++){
-      const [x, y] = getCellOrigin(i, j);
-
-      if (j !== 0){
-        context.fillRect(x, y, cellWH, cellWH);
-      }
-
-      const value = grid[i][j];
-      if (value !== 0){
-        drawPieceImg(value, i, j);
-      }
-    }
-  }
-}
-
-function drawDrop(){
-  context.clearRect(dropX, dropY, gridWH, dropH);
-
-  if (nextPiece.piece !== 0){
-    drawPieceImg(nextPiece.piece, nextPiece.col, 0);
-  }
+  context.font = modeH + 'px Arial';
+  context.fillStyle = darkBlue;
+  context.textAlign = 'right';
+  context.textBaseline = 'top';
+  context.fillText('Mode: '+mode, gridWH, modeY);
 }
 
 function drawScore(){
   context.clearRect(scoreX, scoreY, gridWH, scoreH);
 
-  const scoreFontH = gameover ? scoreH/2 : scoreH;
-  context.font = scoreFontH + 'px Arial';
-  context.fillStyle = cellColor;
+  context.font = scoreH + 'px Arial';
+  context.fillStyle = darkBlue;
   context.textAlign = 'center';
   context.textBaseline = 'top';
-  const scoreText = gameover ? 'GAME OVER! ' + score : score;
-  context.fillText(scoreText, gridWH/2, scoreY);
+  context.fillText(getFormattedScore(), gridWH/2, scoreY);
 }
 
 function drawDropCount(){
   context.clearRect(dropCountX, dropCountY-scoreVPad, gridWH, dropCountWH+scoreVPad);
 
-  context.fillStyle = cellColor;
+  context.fillStyle = darkBlue;
   context.lineWidth = dropCountBorderW;
-  context.strokeStyle = cellColor;
+  context.strokeStyle = darkBlue;
   const radius = dropCountWH/2;
   const dropCountCircleY = dropCountY + radius;
   for (let i = 1; i <= getMaxDrops(); i++){
@@ -86,12 +66,110 @@ function drawLevel(){
   context.fillText('LEVEL '+level, levelX, levelY);
 }
 
-function drawMode(){
-  context.clearRect(modeX, modeY, gridWH, modeH);
+function drawDrop(){
+  context.clearRect(dropX, dropY, gridWH, dropH);
 
-  context.font = modeH + 'px Arial';
-  context.fillStyle = cellColor;
-  context.textAlign = 'right';
+  if (nextPiece.piece !== 0){
+    drawPieceImg(nextPiece.piece, nextPiece.col, 0);
+  }
+
+  let backgroundColor;
+  if (nextPiece.piece === solidValue){
+    backgroundColor = backgroundColors[7];
+  } else {
+    backgroundColor = backgroundColors[nextPiece.piece - 1];
+  }
+
+  document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
+}
+
+function drawGrid(){
+  context.clearRect(gridX, gridY, gridWH, gridWH);
+
+  context.fillStyle = cellBlue;
+  for (let i = 1; i <= 7; i++){
+    for (let j = 0; j <= 7; j++){
+      const [x, y] = getCellOrigin(i, j);
+
+      if (j !== 0){
+        context.fillRect(x, y, cellWH, cellWH);
+      }
+
+      const value = grid[i][j];
+      if (value !== 0){
+        drawPieceImg(value, i, j);
+      }
+    }
+  }
+}
+
+function clearCanvas(){
+  context.clearRect(0, 0, gridWH, canvasH);
+}
+
+function drawGame(){
+  clearCanvas();
+
+  drawMode();
+  drawScore();
+  drawDropCount();
+  drawLevel();
+  drawDrop();
+  drawGrid();
+}
+
+function drawGameover(){
+  clearCanvas();
+
+  document.body.style.background = lightBlue;
+  context.drawImage(images[gameoverImgName], 0, 0, gridWH, gridWH);
+
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
   context.textBaseline = 'top';
-  context.fillText('Mode: '+mode, gridWH, modeY);
+
+  context.font = gameoverScoreTextH + 'px Arial';
+  context.fillText('Your Score:', gridWH/2, gameoverScoreTextY);
+
+  context.font = gameoverScoreH + 'px Arial';
+  context.fillText(getFormattedScore(), gridWH/2, gameoverScoreY);
+
+  context.font = gameoverStatH + 'px Arial';
+
+  context.textAlign = 'right';
+  context.fillText('Mode:', gridWH/2, gameoverStatModeY);
+  context.textAlign = 'left';
+  context.fillText(' '+mode, gridWH/2, gameoverStatModeY);
+
+  context.textAlign = 'right';
+  context.fillText('Longest Chain:', gridWH/2, gameoverStatChainY);
+  context.textAlign = 'left';
+  context.fillText(' '+longestChain, gridWH/2, gameoverStatChainY);
+
+  context.textAlign = 'right';
+  context.fillText('Level:', gridWH/2, gameoverStatLevelY);
+  context.textAlign = 'left';
+  context.fillText(' '+level, gridWH/2, gameoverStatLevelY);
+
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+
+  context.fillStyle = buttonGreen;
+  context.fillRect(gameoverButtonPlayX, gameoverButtonPlayY, gameoverButtonW, gameoverButtonH);
+  context.fillStyle = 'white';
+  context.fillText('Play Again', gridWH/2, gameoverButtonPlayY + gameoverButtonH/2);
+  if (gameoverButtonFocused === 0){
+    context.lineWidth = gameoverButtonBorderFocusedW;
+    context.strokeStyle = 'white';
+    context.beginPath();
+    context.rect(gameoverButtonPlayX, gameoverButtonPlayY, gameoverButtonW, gameoverButtonH);
+    context.stroke();
+  }
+
+  context.lineWidth = gameoverButtonFocused === 1 ? gameoverButtonBorderFocusedW : gameoverButtonBorderW;
+  context.strokeStyle = 'white';
+  context.beginPath();
+  context.rect(gameoverButtonMenuX, gameoverButtonMenuY, gameoverButtonW, gameoverButtonH);
+  context.stroke();
+  context.fillText('Main Menu', gridWH/2, gameoverButtonMenuY + gameoverButtonH/2);
 }

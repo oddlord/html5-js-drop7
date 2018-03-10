@@ -87,6 +87,7 @@ function isPieceAMatch(i, j){ // check if a piece at given coords is a match
 
 function checkMatches(){
   chain++;
+  longestChain = Math.max(longestChain, chain);
   const matchedPieces = [];
 
   for (let i = 1; i <= 7; i++){
@@ -116,36 +117,36 @@ function checkMatches(){
   }
 }
 
-function gameOver(){
-  gameover = true;
-  drawScore();
+function gameover(){
+  isGameover = true;
+  drawGameover();
 }
 
-function checkGameOver(){
-  let gameover = false;
+function checkGameover(){
+  let isGameover = false;
   for (let i = 1; i <= 7; i++){
     if (grid[i][0] !== 0){
-      gameover = true;
+      isGameover = true;
       break;
     }
   }
 
-  if (gameover){
-    gameOver();
+  if (isGameover){
+    gameover();
   }
 
-  gameover = true;
+  isGameover = true;
   colsLoop: for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
       if (grid[i][j] === 0){
-        gameover = false;
+        isGameover = false;
         break colsLoop;
       }
     }
   }
 
-  if (gameover){
-    gameOver();
+  if (isGameover){
+    gameover();
   }
 }
 
@@ -205,11 +206,12 @@ function pieceDrop(playerDrop) {
   drawDrop();
   drawGrid();
 
-  checkGameOver();
   checkMatches();
   checkEmptyGrid();
 
-  if (!gameover){
+  checkGameover();
+
+  if (!isGameover){
     chain = 0;
     if (playerDrop){
       drawScore();
@@ -226,14 +228,6 @@ function pieceMove(dir) {
 function nextPieceReset(){
   nextPiece.col = 4;
   nextPiece.piece = getRandomPiece(false);
-
-  let backgroundColor;
-  if (nextPiece.piece === solidValue){
-    backgroundColor = backgroundColors[7];
-  } else {
-    backgroundColor = backgroundColors[nextPiece.piece - 1];
-  }
-  document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
 
   drawDrop();
 }
@@ -263,55 +257,95 @@ function gridReset(){
   }
 }
 
-function startGame(){
-  gameStarted = true;
-  gameover = false;
-
+function resetVars(){
   mode = 'classic';
 
   score = 0;
   chain = 0;
+  longestChain = 0;
   dropCount = getMaxDrops();
   level = 1;
 
-  drawMode();
-  drawScore();
-  drawDropCount();
-  drawLevel();
+  gameoverButtonFocused = 0;
+}
 
-  drawGrid();
+function startGame(){
+  gameStarted = true;
+  isGameover = false;
+
+  grid = createMatrix(8, 8);
   gridReset();
-  drawGrid();
-
+  resetVars();
   nextPieceReset();
+
+  drawGame();
+}
+
+function mainMenu(){
+  // TODO!
+  alert('Not yet implemented, sorry! :)');
 }
 
 document.addEventListener('keydown', event => {
-  if (gameover || !gameStarted){
+  const keyCode = event.keyCode;
+
+  if (debugMode){
+    if (keyCode === 75){  // K (as in "kill")
+      gameover();
+    }
+  }
+
+  if (!gameStarted){
     return;
   }
 
-  const keyCode = event.keyCode;
-  if (keyCode === 37 || keyCode === 65){
-    pieceMove(-1);
-  } else if (keyCode === 39 || keyCode === 68){
-    pieceMove(1);
-  } else if (keyCode === 40 || keyCode === 83){
-    pieceDrop(true);
+  if (keyCode === 37 || keyCode === 65){  // A or left arrow
+    if (!isGameover){
+      pieceMove(-1);
+    }
+  } else if (keyCode === 39 || keyCode === 68){ // D or right arrow
+    if (!isGameover){
+      pieceMove(1);
+    }
+  } else if (keyCode === 40 || keyCode === 83){ // S or down arrow
+    if (isGameover){
+      gameoverButtonFocused = (gameoverButtonFocused + 1) % 2;
+      drawGameover();
+    } else {
+      pieceDrop(true);
+    }
+  } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
+    if (isGameover){
+      gameoverButtonFocused = Math.abs(gameoverButtonFocused - 1) % 2;
+      drawGameover();
+    }
+  } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
+    if (isGameover){
+      if (gameoverButtonFocused === 0){
+        startGame();
+      } else {
+        mainMenu();
+      }
+    }
   }
 });
 
-const grid = createMatrix(8, 8);
+const debugMode = false;
+
+let grid;
 const nextPiece = {
   col: 4,
   piece: 0
 }
 var gameStarted = false;
-var gameover;
-var mode;
-var score;
-var chain;
-var dropCount;
-var level;
+var isGameover = false;
+var mode = 'classic';
+var score = 0;
+var chain = 0;
+var longestChain = 0;
+var dropCount = getMaxDrops();;
+var level = 1;
+
+gameoverButtonFocused = 0;
 
 loadImages();
