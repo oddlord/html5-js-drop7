@@ -35,8 +35,8 @@ function drawMode(){
   text = 'Best: ';
   context.fillText(text, bestX, bestY);
   let best = 0;
-  if (scores.length > 0){
-    best = Math.max(...scores);
+  if (scores[mode].length > 0){
+    best = Math.max(...scores[mode]);
   }
   textWidth = context.measureText(text).width;
   context.font = modeBestTextH + 'px Arial';
@@ -194,23 +194,98 @@ function drawGameover(){
 
   context.textAlign = 'center';
   context.textBaseline = 'middle';
+  context.font = buttonTextH + 'px Arial';
 
   context.fillStyle = buttonGreen;
-  context.fillRect(gameoverButtonPlayX, gameoverButtonPlayY, gameoverButtonW, gameoverButtonH);
+  context.fillRect(gameoverButtonPlayX, gameoverButtonPlayY, buttonW, buttonH);
   context.fillStyle = 'white';
-  context.fillText('Play Again', gridWH/2, gameoverButtonPlayY + gameoverButtonH/2);
+  context.fillText('Play Again', gridWH/2, gameoverButtonPlayY + buttonH/2);
   if (gameoverButtonFocused === 0){
-    context.lineWidth = gameoverButtonBorderFocusedW;
+    context.lineWidth = buttonBorderFocusedW;
     context.strokeStyle = 'white';
     context.beginPath();
-    context.rect(gameoverButtonPlayX, gameoverButtonPlayY, gameoverButtonW, gameoverButtonH);
+    context.rect(gameoverButtonPlayX, gameoverButtonPlayY, buttonW, buttonH);
     context.stroke();
   }
 
-  context.lineWidth = gameoverButtonFocused === 1 ? gameoverButtonBorderFocusedW : gameoverButtonBorderW;
+  context.lineWidth = gameoverButtonFocused === 1 ? buttonBorderFocusedW : buttonBorderW;
   context.strokeStyle = 'white';
   context.beginPath();
-  context.rect(gameoverButtonMenuX, gameoverButtonMenuY, gameoverButtonW, gameoverButtonH);
+  context.rect(gameoverButtonMenuX, gameoverButtonMenuY, buttonW, buttonH);
   context.stroke();
-  context.fillText('Main Menu', gridWH/2, gameoverButtonMenuY + gameoverButtonH/2);
+  context.fillText('Main Menu', gridWH/2, gameoverButtonMenuY + buttonH/2);
+}
+
+function drawMainMenu(){
+  clearCanvas();
+
+  const noHighscoreText = 'No High Score';
+  let highscoreText;
+
+  document.body.style.background = lightBlue;
+
+  context.textAlign = 'center';
+
+  context.fillStyle = buttonGreen;
+  context.fillRect(mainMenuButtonClassicX, mainMenuButtonClassicY, buttonW, buttonH);
+  context.fillStyle = 'white';
+  context.textBaseline = 'middle';
+  context.font = buttonTextH + 'px Arial';
+  context.fillText('Classic', gridWH/2, mainMenuButtonClassicY + buttonH/2);
+  if (mainMenuButtonFocused === 0){
+    context.lineWidth = buttonBorderFocusedW;
+    context.strokeStyle = 'white';
+    context.beginPath();
+    context.rect(mainMenuButtonClassicX, mainMenuButtonClassicY, buttonW, buttonH);
+    context.stroke();
+  }
+  highscoreText = noHighscoreText;
+  if (scores['classic'].length > 0){
+    highscoreText = 'High Score: ' + getFormattedScore(Math.max(...scores['classic']));
+  }
+  context.textBaseline = 'top';
+  context.font = mainMenuHighscoreH + 'px Arial';
+  context.fillText(highscoreText, gridWH/2, mainMenuButtonClassicHighscoreY);
+
+  context.fillStyle = buttonGreen;
+  context.fillRect(mainMenuButtonBlitzX, mainMenuButtonBlitzY, buttonW, buttonH);
+  context.fillStyle = 'white';
+  context.textBaseline = 'middle';
+  context.font = buttonTextH + 'px Arial';
+  context.fillText('Blitz', gridWH/2, mainMenuButtonBlitzY + buttonH/2);
+  if (mainMenuButtonFocused === 1){
+    context.lineWidth = buttonBorderFocusedW;
+    context.strokeStyle = 'white';
+    context.beginPath();
+    context.rect(mainMenuButtonBlitzX, mainMenuButtonBlitzY, buttonW, buttonH);
+    context.stroke();
+  }
+  highscoreText = noHighscoreText;
+  if (scores['blitz'].length > 0){
+    highscoreText = 'High Score: ' + getFormattedScore(Math.max(...scores['blitz']));
+  }
+  context.textBaseline = 'top';
+  context.font = mainMenuHighscoreH + 'px Arial';
+  context.fillText(highscoreText, gridWH/2, mainMenuButtonBlitzHighscoreY);
+
+  context.fillStyle = buttonGreen;
+  context.fillRect(mainMenuButtonSequenceX, mainMenuButtonSequenceY, buttonW, buttonH);
+  context.fillStyle = 'white';
+  context.textBaseline = 'middle';
+  context.font = buttonTextH + 'px Arial';
+  context.fillText('Sequence', gridWH/2, mainMenuButtonSequenceY + buttonH/2);
+  if (mainMenuButtonFocused === 2){
+    context.lineWidth = buttonBorderFocusedW;
+    context.strokeStyle = 'white';
+    context.beginPath();
+    context.rect(mainMenuButtonSequenceX, mainMenuButtonSequenceY, buttonW, buttonH);
+    context.stroke();
+  }
+  highscoreText = noHighscoreText;
+  if (scores['sequence'].length > 0){
+    highscoreText = 'High Score: ' + getFormattedScore(Math.max(...scores['sequence']));
+  }
+  context.textBaseline = 'top';
+  context.font = mainMenuHighscoreH + 'px Arial';
+  context.fillText(highscoreText, gridWH/2, mainMenuButtonSequenceHighscoreY);
 }

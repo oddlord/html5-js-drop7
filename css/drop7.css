@@ -7,7 +7,7 @@ body {
 }
 
 canvas {
-  // border: solid .2em #000;
+  border: solid .2em #000;
 }
 
 .aligner {

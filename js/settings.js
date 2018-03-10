@@ -71,11 +71,17 @@ const gameoverButtonsVPadScale = 0.05;  // WTR gameover lower section height
 
 const gameoverStatPadScale = 0.4; // WRT gameover stat height
 
-const gameoverButtonWScale = 3;                 // WRT gameover button height
-const gameoverButtonPadScale = 0.4;             // WRT gameover button height
-const gameoverButtonTextHScale = 0.3;           // WRT gameover button height
-const gameoverButtonBorderWScale = 0.025;       // WRT gameover button height
-const gameoverButtonBorderFocusedWScale = 0.1;  // WRT gameover button height
+const buttonWScale = 4;                 // WRT button height
+const buttonTextHScale = 0.4;           // WRT button height
+const buttonBorderWScale = 0.025;       // WRT button height
+const buttonBorderFocusedWScale = 0.1;  // WRT button height
+
+const gameoverButtonPadScale = 0.4; // WRT button height
+
+const mainMenuUpperVPadScale = 0.2; // WRT canvas height
+
+const mainMenuHighscoreHScale = 0.35;  // WRT button height
+const mainMenuButtonPadScale = 0.4;   // WRT button height
 
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
@@ -114,12 +120,18 @@ function setDimensions(){
   gameoverStatH = gameoverStatsH / (5 + 3*gameoverStatPadScale);
   gameoverStatPad = gameoverStatH * gameoverStatPadScale;
 
-  gameoverButtonH = gameoverButtonsH / (2 + gameoverButtonPadScale);
-  gameoverButtonW = gameoverButtonH * gameoverButtonWScale;
-  gameoverButtonPad = gameoverButtonH * gameoverButtonPadScale;
-  gameoverButtonTextH = gameoverButtonH * gameoverButtonTextHScale;
-  gameoverButtonBorderW = gameoverButtonH * gameoverButtonBorderWScale;
-  gameoverButtonBorderFocusedW = gameoverButtonH * gameoverButtonBorderFocusedWScale;
+  buttonH = gameoverButtonsH / (2 + gameoverButtonPadScale);
+  buttonW = buttonH * buttonWScale;
+  buttonTextH = buttonH * buttonTextHScale;
+  buttonBorderW = buttonH * buttonBorderWScale;
+  buttonBorderFocusedW = buttonH * buttonBorderFocusedWScale;
+
+  gameoverButtonPad = buttonH * gameoverButtonPadScale;
+
+  mainMenuUpperVPad = canvasH * mainMenuUpperVPadScale;
+
+  mainMenuHighscoreH = buttonH * mainMenuHighscoreHScale;
+  mainMenuButtonPad = buttonH * mainMenuButtonPadScale;
 }
 
 var canvasH;
@@ -158,12 +170,18 @@ var gameoverButtonsH;
 var gameoverStatH;
 var gameoverStatPad;
 
-var gameoverButtonH;
-var gameoverButtonW;
+var buttonH;
+var buttonW;
+var buttonTextH;
+var buttonBorderW;
+var buttonBorderFocusedW;
+
 var gameoverButtonPad;
-var gameoverButtonTextH;
-var gameoverButtonBorderW;
-var gameoverButtonBorderFocusedW;
+
+var mainMenuUpperVPad;
+
+var mainMenuHighscoreH;
+var mainMenuButtonPad;
 
 setDimensions();
 
@@ -236,11 +254,32 @@ function setOrigins(){
   gameoverStatNewScoreX = gameoverStatsX + 0;
   gameoverStatNewScoreY = gameoverStatsY + 4*gameoverStatH + 4*gameoverStatPad;
 
-  gameoverButtonPlayX = gameoverButtonsX + gridWH/2 - gameoverButtonW/2;
+  gameoverButtonPlayX = gameoverButtonsX + gridWH/2 - buttonW/2;
   gameoverButtonPlayY = gameoverButtonsY;
 
-  gameoverButtonMenuX = gameoverButtonsX + gridWH/2 - gameoverButtonW/2;
-  gameoverButtonMenuY = gameoverButtonsY + gameoverButtonH + gameoverButtonPad;
+  gameoverButtonMenuX = gameoverButtonsX + gridWH/2 - buttonW/2;
+  gameoverButtonMenuY = gameoverButtonsY + buttonH + gameoverButtonPad;
+
+  mainMenuButtonsX = 0;
+  mainMenuButtonsY = mainMenuUpperVPad + 0;
+
+  mainMenuButtonClassicX = mainMenuButtonsX + gridWH/2 - buttonW/2;
+  mainMenuButtonClassicY = mainMenuButtonsY + 0;
+
+  mainMenuButtonClassicHighscoreX = mainMenuButtonsX + 0;
+  mainMenuButtonClassicHighscoreY = mainMenuButtonsY + buttonH;
+
+  mainMenuButtonBlitzX = mainMenuButtonsX + gridWH/2 - buttonW/2;
+  mainMenuButtonBlitzY = mainMenuButtonsY + buttonH + mainMenuHighscoreH + mainMenuButtonPad;
+
+  mainMenuButtonBlitzHighscoreX = mainMenuButtonsX + 0;
+  mainMenuButtonBlitzHighscoreY = mainMenuButtonsY + 2*buttonH + mainMenuHighscoreH + mainMenuButtonPad;
+
+  mainMenuButtonSequenceX = mainMenuButtonsX + gridWH/2 - buttonW/2;
+  mainMenuButtonSequenceY = mainMenuButtonsY + 2*buttonH + 2*mainMenuHighscoreH + 2*mainMenuButtonPad;
+
+  mainMenuButtonSequenceHighscoreX = mainMenuButtonsX + 0;
+  mainMenuButtonSequenceHighscoreY = mainMenuButtonsY + 3*buttonH + 2*mainMenuHighscoreH + 2*mainMenuButtonPad;
 }
 
 var playAreaX;
@@ -311,5 +350,26 @@ var gameoverButtonPlayY;
 
 var gameoverButtonMenuX;
 var gameoverButtonMenuY;
+
+var mainMenuButtonsX;
+var mainMenuButtonsY;
+
+var mainMenuButtonClassicX;
+var mainMenuButtonClassicY;
+
+var mainMenuButtonClassicHighscoreX;
+var mainMenuButtonClassicHighscoreY;
+
+var mainMenuButtonBlitzX;
+var mainMenuButtonBlitzY;
+
+var mainMenuButtonBlitzHighscoreX;
+var mainMenuButtonBlitzHighscoreY;
+
+var mainMenuButtonSequenceX;
+var mainMenuButtonSequenceY;
+
+var mainMenuButtonSequenceHighscoreX;
+var mainMenuButtonSequenceHighscoreY;
 
 setOrigins();

@@ -104,22 +104,22 @@ function getFormattedScore(unformattedScore){
 function getAvgScores(){
   let prevAvgScore = 0;
   let prevScoresSum = 0;
-  for (let i = 0; i < scores.length - 1; i++){
-    prevScoresSum += scores[i];
+  for (let i = 0; i < scores[mode].length - 1; i++){
+    prevScoresSum += scores[mode][i];
   }
-  if (scores.length - 1 > 0){
-    prevAvgScore = Math.floor(prevScoresSum / (scores.length - 1));
+  if (scores[mode].length - 1 > 0){
+    prevAvgScore = Math.floor(prevScoresSum / (scores[mode].length - 1));
   }
 
-  const newAvgScore = Math.floor((prevScoresSum+score) / scores.length);
+  const newAvgScore = Math.floor((prevScoresSum+score) / scores[mode].length);
 
   return[prevAvgScore, newAvgScore];
 }
 
 function isNewHighscore(){
   let isHighscore = true;
-  for (let i = 0; i < scores.length - 1; i++){
-    if (scores[i] >= score){
+  for (let i = 0; i < scores[mode].length - 1; i++){
+    if (scores[mode][i] >= score){
       isHighscore = false;
       break;
     }

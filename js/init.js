@@ -26,7 +26,7 @@ function loadImages(){
 function imageLoadPost(){
   loadedImages++;
   if (loadedImages === Object.keys(images).length){
-    startGame();
+    loadingComplete();
   }
 }
 

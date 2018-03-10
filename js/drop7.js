@@ -117,12 +117,6 @@ function checkMatches(){
   }
 }
 
-function gameover(){
-  isGameover = true;
-  scores.push(score);
-  drawGameover();
-}
-
 function checkGameover(){
   let isGameover = false;
   for (let i = 1; i <= 7; i++){
@@ -259,19 +253,25 @@ function gridReset(){
 }
 
 function resetVars(){
-  mode = 'classic';
-
   score = 0;
   chain = 0;
   longestChain = 0;
   dropCount = getMaxDrops();
   level = 1;
+}
 
-  gameoverButtonFocused = 0;
+function mainMenu(){
+  inMenu = true;
+  inGame = false;
+  isGameover = false;
+
+  mainMenuButtonFocused = 0;
+  drawMainMenu();
 }
 
 function startGame(){
-  gameStarted = true;
+  inMenu = false;
+  inGame = true;
   isGameover = false;
 
   grid = createMatrix(8, 8);
@@ -282,9 +282,20 @@ function startGame(){
   drawGame();
 }
 
-function mainMenu(){
-  // TODO!
-  alert('Not yet implemented, sorry! :)');
+function gameover(){
+  inMenu = false;
+  inGame = false;
+  isGameover = true;
+
+  scores[mode].push(score);
+
+  gameoverButtonFocused = 0;
+  drawGameover();
+}
+
+function loadingComplete(){
+  isLoaded = true;
+  mainMenu();
 }
 
 document.addEventListener('keydown', event => {
@@ -296,58 +307,81 @@ document.addEventListener('keydown', event => {
     }
   }
 
-  if (!gameStarted){
+  if (!isLoaded){
     return;
   }
 
-  if (keyCode === 37 || keyCode === 65){  // A or left arrow
-    if (!isGameover){
+  if (inMenu){
+    if (keyCode === 40 || keyCode === 83){ // S or down arrow
+      mainMenuButtonFocused = (mainMenuButtonFocused + 1) % 3;
+      drawMainMenu();
+    } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
+      mainMenuButtonFocused = Math.abs(mainMenuButtonFocused - 1) % 3;
+      drawMainMenu();
+    } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
+      if (mainMenuButtonFocused === 0){
+        mode = 'classic';
+      } else if (mainMenuButtonFocused === 1){
+        mode = 'blitz';
+      } else if (mainMenuButtonFocused === 2) {
+        mode = 'sequence';
+      } else {
+        throw new Error('Unknown error with button selection.');
+      }
+      startGame();
+    }
+  } else if (inGame){
+    if (keyCode === 37 || keyCode === 65){  // A or left arrow
       pieceMove(-1);
-    }
-  } else if (keyCode === 39 || keyCode === 68){ // D or right arrow
-    if (!isGameover){
+    } else if (keyCode === 39 || keyCode === 68){ // D or right arrow
       pieceMove(1);
-    }
-  } else if (keyCode === 40 || keyCode === 83){ // S or down arrow
-    if (isGameover){
-      gameoverButtonFocused = (gameoverButtonFocused + 1) % 2;
-      drawGameover();
-    } else {
+    } else if (keyCode === 40 || keyCode === 83){ // S or down arrow
       pieceDrop(true);
     }
-  } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
-    if (isGameover){
+  } else if (isGameover){
+    if (keyCode === 40 || keyCode === 83){ // S or down arrow
+      gameoverButtonFocused = (gameoverButtonFocused + 1) % 2;
+      drawGameover();
+    } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
       gameoverButtonFocused = Math.abs(gameoverButtonFocused - 1) % 2;
       drawGameover();
-    }
-  } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
-    if (isGameover){
+    } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
       if (gameoverButtonFocused === 0){
         startGame();
-      } else {
+      } else if (gameoverButtonFocused === 1){
         mainMenu();
+      } else {
+        throw new Error('Unknown error with button selection.');
       }
     }
   }
 });
 
-const debugMode = false;
+const debugMode = true;
+
+var isLoaded = false;
+var inGame = false;
+var isGameover = false;
+var inMenu = false;
 
 let grid;
 const nextPiece = {
   col: 4,
   piece: 0
 }
-var gameStarted = false;
-var isGameover = false;
 var mode = 'classic';
 var score = 0;
-const scores = [];
+const scores = {
+  'classic': [],
+  'blitz': [],
+  'sequence': []
+};
 var chain = 0;
 var longestChain = 0;
 var dropCount = getMaxDrops();;
 var level = 1;
 
 gameoverButtonFocused = 0;
+mainMenuButtonFocused = 0;
 
 loadImages();
