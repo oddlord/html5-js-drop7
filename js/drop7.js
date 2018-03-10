@@ -119,6 +119,7 @@ function checkMatches(){
 
 function gameover(){
   isGameover = true;
+  scores.push(score);
   drawGameover();
 }
 
@@ -341,6 +342,7 @@ var gameStarted = false;
 var isGameover = false;
 var mode = 'classic';
 var score = 0;
+const scores = [];
 var chain = 0;
 var longestChain = 0;
 var dropCount = getMaxDrops();;

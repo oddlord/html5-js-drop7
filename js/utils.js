@@ -84,9 +84,9 @@ function getMaxDrops(){
   }
 }
 
-function getFormattedScore(){
+function getFormattedScore(unformattedScore){
   let formattedScore = '';
-  let scoreStr = '' + score;
+  let scoreStr = '' + unformattedScore;
   let sinceLastComma = 0;
 
   for (let i = scoreStr.length-1; i >= 0; i--){

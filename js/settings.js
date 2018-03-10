@@ -37,6 +37,8 @@ const piecesImgNames = [
 const solidImgName = 'solid.png';
 const crackedImgName = 'cracked.png';
 const gameoverImgName = 'gameover.png';
+const avgScoreUpImgName = 'avg-score-up.png';
+const avgScoreDownImgName = 'avg-score-down.png';
 
 // Dimensions --------------------
 const canvasHScale = 0.9; // WRT document body
@@ -44,9 +46,9 @@ const canvasHScale = 0.9; // WRT document body
 const playAreaHScale = 0.75; // WRT canvas height
 
 // All these must sum to 1
-const modeHScale = 0.15;    // WRT upper section height
-const scoreHScale = 0.5;    // WRT upper section height
-const scoreVPadScale = 0.2; // WRT upper section height
+const modeBestHScale = 0.25;    // WRT upper section height
+const scoreHScale = 0.45;    // WRT upper section height
+const scoreVPadScale = 0.15; // WRT upper section height
 const levelHScale = 0.15;   // WRT upper section height
 
 const cellPadScale = 0.033; // WRT cell width
@@ -54,13 +56,15 @@ const cellPadScale = 0.033; // WRT cell width
 const dropCountPadScale = 0.2;      // WRT drop counter width
 const dropCountBorderWScale = 0.1;  // WRT drop counter width
 
+const modeBestWScale = 0.35; // WRT grid width
+
 // All these must sum to 1
 const gameoverScoreTextHScale = 0.05;   // WTR gameover lower section height
 const gameoverScoreHScale = 0.15;       // WTR gameover lower section height
 const gameoverScoreVPadScale = 0.1;     // WTR gameover lower section height
-const gameoverStatsHScale = 0.2;        // WTR gameover lower section height
+const gameoverStatsHScale = 0.25;        // WTR gameover lower section height
 const gameoverStatsVPadScale = 0.1;     // WTR gameover lower section height
-const gameoverButtonsHScale = 0.35;     // WTR gameover lower section height
+const gameoverButtonsHScale = 0.3;     // WTR gameover lower section height
 const gameoverButtonsVPadScale = 0.05;  // WTR gameover lower section height
 
 const gameoverStatPadScale = 0.4; // WRT gameover stat height
@@ -86,10 +90,13 @@ function setDimensions(){
   dropCountPad = dropCountWH * dropCountPadScale;
   dropCountBorderW = dropCountWH * dropCountBorderWScale;
 
-  modeH = (upperSectionH-dropCountWH) * modeHScale;
+  modeBestH = (upperSectionH-dropCountWH) * modeBestHScale;
   scoreH = (upperSectionH-dropCountWH) * scoreHScale;
   scoreVPad = (upperSectionH-dropCountWH) * scoreVPadScale;
   levelH = (upperSectionH-dropCountWH) * levelHScale;
+
+  modeBestW = gridWH * modeBestWScale;
+  modeBestTextH = modeBestH / 2;
 
   gameoverImgNonWritableH = (500/1080)*gridWH;
   gameoverLowerSectionH = canvasH - gameoverImgNonWritableH;
@@ -101,7 +108,7 @@ function setDimensions(){
   gameoverStatsVPad = gameoverLowerSectionH * gameoverStatsVPadScale;
   gameoverButtonsH = gameoverLowerSectionH * gameoverButtonsHScale;
 
-  gameoverStatH = gameoverStatsH / (3 + 2*gameoverStatPadScale);
+  gameoverStatH = gameoverStatsH / (5 + 3*gameoverStatPadScale);
   gameoverStatPad = gameoverStatH * gameoverStatPadScale;
 
   gameoverButtonH = gameoverButtonsH / (2 + gameoverButtonPadScale);
@@ -126,10 +133,13 @@ var dropCountWH;
 var dropCountPad;
 var dropCountBorderW;
 
-var modeH;
+var modeBestH;
 var scoreH;
 var scoreVPad;
 var levelH;
+
+var modeBestW;
+var modeBestTextH;
 
 var gameoverImgNonWritableH;
 var gameoverLowerSectionH;
@@ -168,16 +178,22 @@ function setOrigins(){
   dropY = playAreaY + 0;
 
   dropCountX = upperSectionX + 0;
-  dropCountY = upperSectionY + modeH + scoreH + scoreVPad;
+  dropCountY = upperSectionY + modeBestH + scoreH + scoreVPad;
 
-  modeX = upperSectionX + 0;
-  modeY = upperSectionY + 0;
+  modeBestX = upperSectionX + (gridWH - modeBestW);
+  modeBestY = upperSectionY + 0;
 
   scoreX = upperSectionX + 0;
-  scoreY = upperSectionY + modeH;
+  scoreY = upperSectionY + modeBestH;
 
   levelX = upperSectionX + 0;
-  levelY = upperSectionY + modeH + scoreH + scoreVPad + dropCountWH;
+  levelY = upperSectionY + modeBestH + scoreH + scoreVPad + dropCountWH;
+
+  modeX = modeBestX + 0;
+  modeY = modeBestY + 0;
+
+  bestX = modeBestX + 0;
+  bestY = modeBestY + modeBestTextH;
 
   gameoverX = 0;
   gameoverY = 0;
@@ -206,6 +222,12 @@ function setOrigins(){
   gameoverStatLevelX = gameoverStatsX + 0;
   gameoverStatLevelY = gameoverStatsY + 2*gameoverStatH + 2*gameoverStatPad;
 
+  gameoverStatPrevScoreX = gameoverStatsX + 0;
+  gameoverStatPrevScoreY = gameoverStatsY + 3*gameoverStatH + 3*gameoverStatPad;
+
+  gameoverStatNewScoreX = gameoverStatsX + 0;
+  gameoverStatNewScoreY = gameoverStatsY + 4*gameoverStatH + 4*gameoverStatPad;
+
   gameoverButtonPlayX = gameoverButtonsX + gridWH/2 - gameoverButtonW/2;
   gameoverButtonPlayY = gameoverButtonsY;
 
@@ -228,14 +250,20 @@ var dropY;
 var dropCountX;
 var dropCountY;
 
-var modeX;
-var modeY;
+var modeBestX;
+var modeBestY;
 
 var scoreX;
 var scoreY;
 
 var levelX;
 var levelY;
+
+var modeX;
+var modeY;
+
+var bestX;
+var bestY;
 
 var gameoverX;
 var gameoverY;
@@ -260,6 +288,12 @@ var gameoverStatChainY;
 
 var gameoverStatLevelX;
 var gameoverStatLevelY;
+
+var gameoverStatPrevScoreX;
+var gameoverStatPrevScoreY;
+
+var gameoverStatNewScoreX;
+var gameoverStatNewScoreY;
 
 var gameoverButtonPlayX;
 var gameoverButtonPlayY;

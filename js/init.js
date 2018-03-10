@@ -42,7 +42,9 @@ const imagesSrc = [
   piecesImgNames[6],
   solidImgName,
   crackedImgName,
-  gameoverImgName
+  gameoverImgName,
+  avgScoreUpImgName,
+  avgScoreDownImgName
 ]
 
 const images = {};

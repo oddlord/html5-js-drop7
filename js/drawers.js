@@ -18,13 +18,29 @@ function drawPieceImg(value, i, j){
 }
 
 function drawMode(){
-  context.clearRect(modeX, modeY, gridWH, modeH);
+  context.clearRect(modeBestX, modeBestY, modeBestW, modeBestH);
 
-  context.font = modeH + 'px Arial';
   context.fillStyle = darkBlue;
-  context.textAlign = 'right';
+  context.textAlign = 'left';
   context.textBaseline = 'top';
-  context.fillText('Mode: '+mode, gridWH, modeY);
+
+  context.font = 'bold ' + modeBestTextH + 'px Arial';
+  let text = 'Mode: ';
+  context.fillText(text, modeX, modeY);
+  let textWidth = context.measureText(text).width;
+  context.font = modeBestTextH + 'px Arial';
+  context.fillText(mode, modeX + textWidth, modeY);
+
+  context.font = 'bold ' + modeBestTextH + 'px Arial';
+  text = 'Best: ';
+  context.fillText(text, bestX, bestY);
+  let best = 0;
+  if (scores.length > 0){
+    best = Math.max(...scores);
+  }
+  textWidth = context.measureText(text).width;
+  context.font = modeBestTextH + 'px Arial';
+  context.fillText(getFormattedScore(best), bestX + textWidth, bestY);
 }
 
 function drawScore(){
@@ -34,7 +50,7 @@ function drawScore(){
   context.fillStyle = darkBlue;
   context.textAlign = 'center';
   context.textBaseline = 'top';
-  context.fillText(getFormattedScore(), gridWH/2, scoreY);
+  context.fillText(getFormattedScore(score), gridWH/2, scoreY);
 }
 
 function drawDropCount(){
@@ -132,7 +148,7 @@ function drawGameover(){
   context.fillText('Your Score:', gridWH/2, gameoverScoreTextY);
 
   context.font = gameoverScoreH + 'px Arial';
-  context.fillText(getFormattedScore(), gridWH/2, gameoverScoreY);
+  context.fillText(getFormattedScore(score), gridWH/2, gameoverScoreY);
 
   context.font = gameoverStatH + 'px Arial';
 
@@ -150,6 +166,33 @@ function drawGameover(){
   context.fillText('Level:', gridWH/2, gameoverStatLevelY);
   context.textAlign = 'left';
   context.fillText(' '+level, gridWH/2, gameoverStatLevelY);
+
+  let prevAvgScore = 0;
+  let prevScoresSum = 0;
+  for (let i = 0; i < scores.length - 1; i++){
+    prevScoresSum += scores[i];
+  }
+  if (scores.length - 1 > 0){
+    prevAvgScore = Math.floor(prevScoresSum / (scores.length - 1));
+  }
+
+  context.textAlign = 'right';
+  context.fillText('Prev. Avg. Score:', gridWH/2, gameoverStatPrevScoreY);
+  context.textAlign = 'left';
+  context.fillText(' '+getFormattedScore(prevAvgScore), gridWH/2, gameoverStatPrevScoreY);
+
+  const newAvgScore = Math.floor((prevScoresSum+score) / scores.length);
+
+  context.textAlign = 'right';
+  context.fillText('New Avg. Score:', gridWH/2, gameoverStatNewScoreY);
+  context.textAlign = 'left';
+  const newAvgScoreText = ' '+getFormattedScore(newAvgScore);
+  context.fillText(newAvgScoreText, gridWH/2, gameoverStatNewScoreY);
+  if (prevAvgScore !== newAvgScore){
+    const avgScoreImgName = newAvgScore > prevAvgScore ? images[avgScoreUpImgName] : images[avgScoreDownImgName]
+    const avgScoreImgX = gridWH/2 + context.measureText(newAvgScoreText).width + gameoverStatH;
+    context.drawImage(avgScoreImgName, avgScoreImgX, gameoverStatNewScoreY, gameoverStatH, gameoverStatH);
+  }
 
   context.textAlign = 'center';
   context.textBaseline = 'middle';
