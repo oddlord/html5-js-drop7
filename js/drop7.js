@@ -227,16 +227,29 @@ function pieceMove(dir) {
 function nextPieceReset(){
   nextPiece.col = 4;
 
-  const onlyNumbers = mode === 'blitz' ? true : false;
-  nextPiece.piece = getRandomPiece(onlyNumbers);
+  if (mode === 'sequence'){
+    nextPiece.piece = sequencePieces[sequenceNextPiece];
+    sequenceNextPiece = (sequenceNextPiece + 1) % 30;
+  } else {
+    const onlyNumbers = mode === 'blitz' ? true : false;
+    nextPiece.piece = getRandomPiece(onlyNumbers);
+  }
 
   drawDrop();
 }
 
 function gridReset(){
+  if (mode === 'sequence'){
+    for (let i = 1; i <= 7; i++){
+      grid[i][7] = solidValue;
+    }
+    return;
+  }
+
   const onlyNumbers = mode === 'blitz' ? true : false;
   let piecesToDrop = randomIntFromInterval(minStartingPieces, maxStartingPieces);
   let combinations = getAllDropCombinations(onlyNumbers);
+
   while (piecesToDrop > 0 && combinations.length > 0){
     const combinationIndex = randomIntFromInterval(0, combinations.length-1);
 
@@ -264,6 +277,8 @@ function resetVars(){
   longestChain = 0;
   dropCount = getMaxDrops();
   level = 1;
+
+  sequenceNextPiece = 0;
 }
 
 function mainMenu(){
@@ -376,18 +391,26 @@ const nextPiece = {
   piece: 0
 }
 var mode = 'classic';
+
 var score = 0;
-const scores = {
-  'classic': [],
-  'blitz': [],
-  'sequence': []
-};
 var chain = 0;
 var longestChain = 0;
 var dropCount = getMaxDrops();;
 var level = 1;
 
+const scores = {
+  'classic': [],
+  'blitz': [],
+  'sequence': []
+};
+
 gameoverButtonFocused = 0;
 mainMenuButtonFocused = 0;
+
+var sequenceNextPiece = 0;
+const sequencePieces = [2, 1, 1, solidValue, 4, 5, solidValue, solidValue,
+                        solidValue, 6, 1, 5, 7, 5, 3, 6, 3, solidValue, 6,
+                        solidValue, 2, 5, 7, 1, solidValue, 5, solidValue,
+                        solidValue, solidValue, 4];
 
 loadImages();
