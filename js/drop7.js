@@ -1,4 +1,4 @@
-function applyGravity(){
+function applyGravity(playerAction){
   for (let i = 1; i <= 7; i++){
     for (let j = 7; j >= 1; j--){
       if (j === 7 || grid[i][j] === null){
@@ -15,14 +15,20 @@ function applyGravity(){
       }
 
       if (j !== j2){
-        grid[i][j2] = grid[i][j];
+        const piece = grid[i][j];
+        grid[i][j2] = new PlaceholderPiece();
         grid[i][j] = null;
+        if(playerAction){
+          fallingPieces++;
+          window.requestAnimationFrame(function() {
+            fallPieceAnimation(piece, i, j, j2, false, now());
+          });
+        } else {
+          pieceFinishedFalling(piece, i, j2, false, playerAction);
+        }
       }
     }
   }
-
-  drawGrid();
-  checkMatches();
 }
 
 function breakNeighbour(i, j){
@@ -84,7 +90,7 @@ function isNumberedPieceAMatch(i, j){ // check if a piece at given coords is a m
   return false;
 }
 
-function checkMatches(){
+function checkMatches(playerAction){
   chain++;
   longestChain = Math.max(longestChain, chain);
   const matchedPieces = [];
@@ -112,7 +118,7 @@ function checkMatches(){
       breakNeighbours(matchedPiece.i, matchedPiece.j);
     }
     drawGrid();
-    applyGravity();
+    applyGravity(playerAction);
   }
 }
 
@@ -182,10 +188,21 @@ function checkEmptyGrid(){
   }
 }
 
-function pieceFinishedFalling(piece, i, j, playerDrop){
+function pieceFinishedFalling(piece, i, j, playerAction){
   grid[i][j] = piece;
 
-  if (playerDrop && dropCount === 0){
+  if (fallingPieces === 0){
+    drawGrid();
+    drawDrop();
+    checkMatches(playerAction);
+    checkEmptyGrid();
+  }
+}
+
+function pieceFinishedDropping(piece, i, j, playerAction){
+  grid[i][j] = piece;
+
+  if (playerAction && dropCount === 0){
     dropCount = getMaxDrops();
     nextLevel();
     drawDropCount();
@@ -194,21 +211,21 @@ function pieceFinishedFalling(piece, i, j, playerDrop){
   drawDrop();
   drawGrid();
 
-  checkMatches();
+  checkMatches(playerAction);
   checkEmptyGrid();
 
   checkGameover();
 
   if (!isGameover){
     chain = 0;
-    if (playerDrop){
+    if (playerAction){
       drawScore();
       nextPieceReset();
     }
   }
 }
 
-function pieceDrop(playerDrop) {
+function pieceDrop(playerAction) {
   if (nextPiece.piece === null){
     return;
   }
@@ -222,15 +239,17 @@ function pieceDrop(playerDrop) {
       const piece = nextPiece.piece;
       const i = nextPiece.col;
       nextPiece.piece = null;
+      grid[i][j] = new PlaceholderPiece();
 
-      if(playerDrop){
+      if(playerAction){
         dropCount--;
         drawDropCount();
+        fallingPieces++;
         window.requestAnimationFrame(function() {
-          fallPieceAnimation(piece, i, 0, j, playerDrop, now());
+          fallPieceAnimation(piece, i, 0, j, true, now());
         });
       } else {
-        pieceFinishedFalling(piece, i, j, playerDrop)
+        pieceFinishedDropping(piece, i, j, playerAction);
       }
       break;
     }
@@ -302,6 +321,8 @@ function resetVars(){
   level = 1;
 
   sequenceNextPiece = 0;
+
+  fallingPieces = 0;
 }
 
 function mainMenu(){
@@ -403,7 +424,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = false;
+const debugMode = true;
 
 var isLoaded = false;
 var inGame = false;
@@ -439,5 +460,7 @@ const sequenceDrops = [
   np(7), np(1), sp(2), np(5), sp(1), sp(3), sp(2), np(4)
 ];
 const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
+
+var fallingPieces = 0;
 
 loadImages();

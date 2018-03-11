@@ -16,6 +16,10 @@ function drawPieceImg(piece, i, j){
 }
 
 function drawPieceImgXY(piece, x, y){
+  if (piece.isPlaceholder()){
+   return;
+  }
+
   const img = images[piece.imgName];
   context.drawImage(img, x, y, cellWH, cellWH);
 }
@@ -305,7 +309,7 @@ function drawColumn(i){
   }
 }
 
-function fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime){
+function fallPieceAnimation(piece, i, startJ, endJ, isDrop, startTime){
   [startX, startY] = getCellOrigin(i, startJ);
   [endX, endY] = getCellOrigin(i, endJ);
 
@@ -314,7 +318,12 @@ function fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime){
   const currentY = startY + elapsedTime*hPerMsFall;
 
   if (currentY >= endY){
-    pieceFinishedFalling(piece, i, endJ, playerDrop);
+    fallingPieces--;
+    if (isDrop){
+      pieceFinishedDropping(piece, i, endJ, true);
+    } else {
+      pieceFinishedFalling(piece, i, endJ, true);
+    }
     return;
   }
 
@@ -322,6 +331,6 @@ function fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime){
   drawPieceImgXY(piece, endX, currentY);
 
   window.requestAnimationFrame(function() {
-    fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime);
+    fallPieceAnimation(piece, i, startJ, endJ, isDrop, startTime);
   });
 }

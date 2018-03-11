@@ -23,6 +23,10 @@ class Piece {
   isCrackable(){
     return (this instanceof HiddenPiece);
   }
+
+  isPlaceholder(){
+    return (this instanceof PlaceholderPiece);
+  }
 }
 
 class NumberedPiece extends Piece {
@@ -92,5 +96,12 @@ class CrackedPiece extends HiddenPiece {
 
   crack(){
     return this.numberedPiece;
+  }
+}
+
+class PlaceholderPiece extends Piece {
+  constructor(){
+    super();
+    this.imgName = gameoverImgName;
   }
 }
