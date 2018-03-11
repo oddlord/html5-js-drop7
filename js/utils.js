@@ -1,14 +1,14 @@
-function createMatrix(w, h){
+function createMatrix(w, h, defaultValue){
   const matrix = [];
   while (h--) {
-    matrix.push(new Array(w).fill(0));
+    matrix.push(new Array(w).fill(defaultValue));
   }
   return matrix;
 }
 
 function copyMatrix(original, copy){
   if ((original.length !== copy.length) || (original[0].length != copy[0].length)){
-    throw new Error('Matrix copy error: matrices dimensions mismatch');
+    throw new Error('Matrix copy error: matrices dimensions mismatch.');
   }
 
   for (let i = 0; i < original.length; i++){
@@ -34,46 +34,23 @@ function randomIntFromInterval(min, max){
 function getAllDropCombinations(onlyNumbers){
   const combinations = [];
 
-  const maxPieceNumber = onlyNumbers ? 7 : 8;
-
-  for (let piece = 1; piece <= maxPieceNumber; piece++){
-    for (let col = 1; col <= 7; col++){
+  for (let col = 1; col <= 7; col++){
+    for (let number = 1; number <= 7; number++){
       combinations.push({
         col: col,
-        piece: piece === 8 ? solidValue : piece
+        piece: new NumberedPiece(number)
+      });
+    }
+
+    if (!onlyNumbers){
+      combinations.push({
+        col: col,
+        piece: SolidPiece.getRandomSolidPiece()
       });
     }
   }
 
   return combinations;
-}
-
-function getRandomPiece(onlyNumbers){
-  let max = 8;
-  if (onlyNumbers){
-    max = 7;
-  }
-
-  let piece = randomIntFromInterval(1, max);
-  piece = piece === 8 ? solidValue : piece;
-
-  return piece;
-}
-
-function getPieceImg(piece){
-  let imgName;
-
-  if (piece >= 1 && piece <= 7){
-    imgName = piece + 'piece.png';
-  } else if (piece === solidValue){
-    imgName = 'solid.png';
-  } else if (piece === crackedValue){
-    imgName = 'cracked.png';
-  } else {
-    throw new Error('Invalid piece ' + piece);
-  }
-
-  return images[imgName];
 }
 
 function getMaxDrops(){
@@ -128,4 +105,12 @@ function isNewHighscore(){
   }
 
   return isHighscore;
+}
+
+function np(number){
+  return new NumberedPiece(number);
+}
+
+function sp(number){
+  return new SolidPiece(new NumberedPiece(number));
 }

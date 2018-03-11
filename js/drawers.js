@@ -4,16 +4,15 @@ function getCellOrigin(i, j){
   return [x, y];
 }
 
-function drawPieceImg(value, i, j){
-  const img = getPieceImg(value);
-  const [x, y] = getCellOrigin(i, j);
-
+function drawPieceImg(piece, i, j){
   // if image resolution is still not enough, consider step down resizing
   // as explained here
   // https://stackoverflow.com/questions/18761404/how-to-scale-images-on-a-html5-canvas-with-better-interpolation
   // and here
   // https://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
 
+  const [x, y] = getCellOrigin(i, j);
+  const img = images[piece.imgName];
   context.drawImage(img, x, y, cellWH, cellWH);
 }
 
@@ -85,15 +84,10 @@ function drawLevel(){
 function drawDrop(){
   context.clearRect(dropX, dropY, gridWH, dropH);
 
-  if (nextPiece.piece !== 0){
+  let backgroundColor = 'white';
+  if (nextPiece.piece !== null){
     drawPieceImg(nextPiece.piece, nextPiece.col, 0);
-  }
-
-  let backgroundColor;
-  if (nextPiece.piece === solidValue){
-    backgroundColor = backgroundColors[7];
-  } else {
-    backgroundColor = backgroundColors[nextPiece.piece - 1];
+    backgroundColor = nextPiece.piece.getBGColor();
   }
 
   document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
@@ -111,9 +105,9 @@ function drawGrid(){
         context.fillRect(x, y, cellWH, cellWH);
       }
 
-      const value = grid[i][j];
-      if (value !== 0){
-        drawPieceImg(value, i, j);
+      const piece = grid[i][j];
+      if (piece !== null){
+        drawPieceImg(piece, i, j);
       }
     }
   }

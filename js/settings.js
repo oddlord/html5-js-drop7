@@ -4,16 +4,16 @@ const darkBlue = '#223f5f';         // used for text and other elements
 const lightBlue = '#3a84c1';        // used for gameover BG
 const newHighscoreBlue = '#57cbf0'; // used for the "New Highscore" text
 const buttonGreen = '#65be7a';      // used for buttons
-const backgroundColors = [          // used for game BG (depends on current piece)
+const bgNumberedColors = [          // used for game BG (depends on current piece)
   '#488557',  // 1 piece color
   '#b19438',  // 2 piece color
   '#b07b39',  // 3 piece color
   '#a23643',  // 4 piece color
   '#a4528e',  // 5 piece color
   '#3692af',  // 6 piece color
-  '#2a5e8b',  // 7 piece color
-  '#d8e4ea'   // solid piece color
+  '#2a5e8b'   // 7 piece color
 ];
+const bgSolidColor = '#d8e4ea'; // solid piece color
 
 const solidValue = 200;
 const crackedValue = 100;
@@ -21,12 +21,12 @@ const crackedValue = 100;
 const minStartingPieces = 11;
 const maxStartingPieces = 21;
 
-const maxDropCountsRef = 30;
 const classicSequenceDrops = 30;
 const blitzDrops = 5;
+const maxDropCountsRef = Math.max(classicSequenceDrops, blitzDrops);
 
 // Images names ------------------
-const piecesImgNames = [
+const numberedPiecesImgNames = [
   '1piece.png',
   '2piece.png',
   '3piece.png',

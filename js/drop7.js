@@ -1,13 +1,13 @@
 function applyGravity(){
   for (let i = 1; i <= 7; i++){
     for (let j = 7; j >= 1; j--){
-      if (j === 7 || grid[i][j] === 0){
+      if (j === 7 || grid[i][j] === null){
         continue;
       }
 
       let j2 = j;
       while (j2 < 7){
-        if (grid[i][j2+1] === 0){
+        if (grid[i][j2+1] === null){
           j2++;
         } else {
           break;
@@ -16,7 +16,7 @@ function applyGravity(){
 
       if (j !== j2){
         grid[i][j2] = grid[i][j];
-        grid[i][j] = 0;
+        grid[i][j] = null;
       }
     }
   }
@@ -26,10 +26,9 @@ function applyGravity(){
 }
 
 function breakNeighbour(i, j){
-  if (grid[i][j] === solidValue){
-    grid[i][j] = crackedValue;
-  } else if (grid[i][j] === crackedValue){
-    grid[i][j] = getRandomPiece(true);
+  const piece = grid[i][j];
+  if (piece !== null && piece.isCrackable()){
+    grid[i][j] = piece.crack();
   }
 }
 
@@ -48,12 +47,12 @@ function breakNeighbours(i, j){
   }
 }
 
-function isPieceAMatch(i, j){ // check if a piece at given coords is a match
+function isNumberedPieceAMatch(i, j){ // check if a piece at given coords is a match
   const piece = grid[i][j];
 
   let counter = 1;  // vertical check
   for (let j2 = j-1; j2 >= 1; j2--){
-    if (grid[i][j2] === 0){
+    if (grid[i][j2] === null){
       break;
     }
     counter++;
@@ -61,24 +60,24 @@ function isPieceAMatch(i, j){ // check if a piece at given coords is a match
   for (let j2 = j+1; j2 <= 7; j2++){  // check for empty cells not necessary
     counter++;                        // here because of gravity
   }
-  if (counter === piece){
+  if (counter === piece.number){
     return true;
   }
 
   counter = 1;  // horizontal check
   for (let i2 = i-1; i2 >= 1; i2--){
-    if (grid[i2][j] === 0){
+    if (grid[i2][j] === null){
       break;
     }
     counter++;
   }
   for (let i2 = i+1; i2 <= 7; i2++){
-    if (grid[i2][j] === 0){
+    if (grid[i2][j] === null){
       break;
     }
     counter++;
   }
-  if (counter === piece){
+  if (counter === piece.number){
     return true;
   }
 
@@ -93,11 +92,11 @@ function checkMatches(){
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
       const piece = grid[i][j];
-      if (piece === 0 || piece === solidValue || piece === crackedValue){
+      if (piece === null || piece.isCrackable()){
         continue;
       }
 
-      if (isPieceAMatch(i, j)){
+      if (isNumberedPieceAMatch(i, j)){
         matchedPieces.push({
           i: i,
           j: j
@@ -109,7 +108,7 @@ function checkMatches(){
   if (matchedPieces.length > 0){
     for (let matchedPiece of matchedPieces){
       score += Math.floor(7 * (Math.pow(chain, 2.5)));
-      grid[matchedPiece.i][matchedPiece.j] = 0;
+      grid[matchedPiece.i][matchedPiece.j] = null;
       breakNeighbours(matchedPiece.i, matchedPiece.j);
     }
     drawGrid();
@@ -118,9 +117,9 @@ function checkMatches(){
 }
 
 function checkGameover(){
-  let isGameover = false;
-  for (let i = 1; i <= 7; i++){
-    if (grid[i][0] !== 0){
+  let isGameover = false;       // check if gameover because of pieces overflow
+  for (let i = 1; i <= 7; i++){ // after a new level
+    if (grid[i][0] !== null){
       isGameover = true;
       break;
     }
@@ -130,10 +129,10 @@ function checkGameover(){
     gameover();
   }
 
-  isGameover = true;
+  isGameover = true;                      // check if gameover because full grid
   colsLoop: for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
-      if (grid[i][j] === 0){
+      if (grid[i][j] === null){
         isGameover = false;
         break colsLoop;
       }
@@ -159,7 +158,11 @@ function nextLevel(){
     for (let j = 1; j <= 7; j++){
       grid[i][j-1] = grid[i][j];
     }
-    grid[i][7] = solidValue;
+    if (mode === 'sequence'){
+      grid[i][7] = sequenceEmerging[i-1];
+    } else{
+      grid[i][7] = SolidPiece.getRandomSolidPiece();
+    }
   }
 }
 
@@ -167,7 +170,7 @@ function checkEmptyGrid(){
   let emptyGrid = true;
   colsLoop: for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
-      if (grid[i][j] !== 0){
+      if (grid[i][j] !== null){
         emptyGrid = false;
         break colsLoop;
       }
@@ -180,14 +183,14 @@ function checkEmptyGrid(){
 }
 
 function pieceDrop(playerDrop) {
-  if (grid[nextPiece.col][1] !== 0){
+  if (grid[nextPiece.col][1] !== null){
     return;
   }
 
   for (let j = 7; j >= 1; j--){
-    if (grid[nextPiece.col][j] === 0){
+    if (grid[nextPiece.col][j] === null){
       grid[nextPiece.col][j] = nextPiece.piece;
-      nextPiece.piece = 0;
+      nextPiece.piece = null;
       break;
     }
   }
@@ -227,12 +230,13 @@ function pieceMove(dir) {
 function nextPieceReset(){
   nextPiece.col = 4;
 
-  if (mode === 'sequence'){
-    nextPiece.piece = sequencePieces[sequenceNextPiece];
+  if (mode === 'classic'){
+    nextPiece.piece = Piece.getRandomPiece();
+  } else if (mode === 'blitz'){
+    nextPiece.piece = NumberedPiece.getRandomNumberedPiece();
+  } else if (mode === 'sequence'){
+    nextPiece.piece = sequenceDrops[sequenceNextPiece];
     sequenceNextPiece = (sequenceNextPiece + 1) % 30;
-  } else {
-    const onlyNumbers = mode === 'blitz' ? true : false;
-    nextPiece.piece = getRandomPiece(onlyNumbers);
   }
 
   drawDrop();
@@ -241,7 +245,7 @@ function nextPieceReset(){
 function gridReset(){
   if (mode === 'sequence'){
     for (let i = 1; i <= 7; i++){
-      grid[i][7] = solidValue;
+      grid[i][7] = sequenceEmerging[i-1];
     }
     return;
   }
@@ -253,7 +257,7 @@ function gridReset(){
   while (piecesToDrop > 0 && combinations.length > 0){
     const combinationIndex = randomIntFromInterval(0, combinations.length-1);
 
-    const gridCopy = createMatrix(grid.length, grid[0].length);
+    const gridCopy = createMatrix(grid.length, grid[0].length, null);
     copyMatrix(grid, gridCopy);
 
     nextPiece.col = combinations[combinationIndex].col;
@@ -295,7 +299,7 @@ function startGame(){
   inGame = true;
   isGameover = false;
 
-  grid = createMatrix(8, 8);
+  grid = createMatrix(8, 8, null);
   gridReset();
   resetVars();
   nextPieceReset();
@@ -378,7 +382,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = false;
+const debugMode = true;
 
 var isLoaded = false;
 var inGame = false;
@@ -388,7 +392,7 @@ var inMenu = false;
 let grid;
 const nextPiece = {
   col: 4,
-  piece: 0
+  piece: null
 }
 var mode = 'classic';
 
@@ -408,9 +412,11 @@ gameoverButtonFocused = 0;
 mainMenuButtonFocused = 0;
 
 var sequenceNextPiece = 0;
-const sequencePieces = [2, 1, 1, solidValue, 4, 5, solidValue, solidValue,
-                        solidValue, 6, 1, 5, 7, 5, 3, 6, 3, solidValue, 6,
-                        solidValue, 2, 5, 7, 1, solidValue, 5, solidValue,
-                        solidValue, solidValue, 4];
+const sequenceDrops = [
+  np(2), np(1), np(1), sp(6), np(4), np(5), sp(5), sp(5), sp(1), np(6), np(1),
+  np(5), np(7), np(5), np(3), np(6), np(3), sp(2), np(6), sp(4), np(2), np(5),
+  np(7), np(1), sp(2), np(5), sp(1), sp(3), sp(2), np(4)
+];
+const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 
 loadImages();

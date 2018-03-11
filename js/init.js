@@ -33,13 +33,13 @@ function imageLoadPost(){
 canvasInit();
 
 const imagesSrc = [
-  piecesImgNames[0],
-  piecesImgNames[1],
-  piecesImgNames[2],
-  piecesImgNames[3],
-  piecesImgNames[4],
-  piecesImgNames[5],
-  piecesImgNames[6],
+  numberedPiecesImgNames[0],
+  numberedPiecesImgNames[1],
+  numberedPiecesImgNames[2],
+  numberedPiecesImgNames[3],
+  numberedPiecesImgNames[4],
+  numberedPiecesImgNames[5],
+  numberedPiecesImgNames[6],
   solidImgName,
   crackedImgName,
   gameoverImgName,
