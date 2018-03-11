@@ -12,6 +12,10 @@ function drawPieceImg(piece, i, j){
   // https://stackoverflow.com/questions/17861447/html5-canvas-drawimage-how-to-apply-antialiasing
 
   const [x, y] = getCellOrigin(i, j);
+  drawPieceImgXY(piece, x, y);
+}
+
+function drawPieceImgXY(piece, x, y){
   const img = images[piece.imgName];
   context.drawImage(img, x, y, cellWH, cellWH);
 }
@@ -84,13 +88,11 @@ function drawLevel(){
 function drawDrop(){
   context.clearRect(dropX, dropY, gridWH, dropH);
 
-  let backgroundColor = 'white';
   if (nextPiece.piece !== null){
     drawPieceImg(nextPiece.piece, nextPiece.col, 0);
-    backgroundColor = nextPiece.piece.getBGColor();
+    const backgroundColor = nextPiece.piece.getBGColor();
+    document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
   }
-
-  document.body.style.background = 'linear-gradient(to top right, ' + backgroundColor + ', white)';
 }
 
 function drawGrid(){
@@ -282,4 +284,44 @@ function drawMainMenu(){
   context.textBaseline = 'top';
   context.font = mainMenuHighscoreH + 'px Arial';
   context.fillText(highscoreText, gridWH/2, mainMenuButtonSequenceHighscoreY);
+}
+
+function drawColumn(i){
+  [x, y] = getCellOrigin(i, 0);
+  context.clearRect(x, y, cellWH, playAreaH);
+
+  context.fillStyle = cellBlue;
+  for (let j = 0; j <= 7; j++){
+    const [x, y] = getCellOrigin(i, j);
+
+    if (j !== 0){
+      context.fillRect(x, y, cellWH, cellWH);
+    }
+
+    const piece = grid[i][j];
+    if (piece !== null){
+      drawPieceImg(piece, i, j);
+    }
+  }
+}
+
+function fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime){
+  [startX, startY] = getCellOrigin(i, startJ);
+  [endX, endY] = getCellOrigin(i, endJ);
+
+  const elapsedTime = now() - startTime;
+  const hPerMsFall = cellWH / msPerCellFall;
+  const currentY = startY + elapsedTime*hPerMsFall;
+
+  if (currentY >= endY){
+    pieceFinishedFalling(piece, i, endJ, playerDrop);
+    return;
+  }
+
+  drawColumn(i);
+  drawPieceImgXY(piece, endX, currentY);
+
+  window.requestAnimationFrame(function() {
+    fallPieceAnimation(piece, i, startJ, endJ, playerDrop, startTime);
+  });
 }

@@ -83,6 +83,9 @@ const mainMenuUpperVPadScale = 0.2; // WRT canvas height
 const mainMenuHighscoreHScale = 0.35;  // WRT button height
 const mainMenuButtonPadScale = 0.4;   // WRT button height
 
+// Animations -------------------
+const msPerCellFall = 100;
+
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
 

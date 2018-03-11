@@ -182,27 +182,13 @@ function checkEmptyGrid(){
   }
 }
 
-function pieceDrop(playerDrop) {
-  if (grid[nextPiece.col][1] !== null){
-    return;
-  }
+function pieceFinishedFalling(piece, i, j, playerDrop){
+  grid[i][j] = piece;
 
-  for (let j = 7; j >= 1; j--){
-    if (grid[nextPiece.col][j] === null){
-      grid[nextPiece.col][j] = nextPiece.piece;
-      nextPiece.piece = null;
-      break;
-    }
-  }
-
-  if (playerDrop){
-    dropCount--;
+  if (playerDrop && dropCount === 0){
+    dropCount = getMaxDrops();
+    nextLevel();
     drawDropCount();
-    if(dropCount === 0){
-      dropCount = getMaxDrops();
-      nextLevel();
-      drawDropCount();
-    }
   }
 
   drawDrop();
@@ -222,7 +208,40 @@ function pieceDrop(playerDrop) {
   }
 }
 
+function pieceDrop(playerDrop) {
+  if (nextPiece.piece === null){
+    return;
+  }
+
+  if (grid[nextPiece.col][1] !== null){
+    return;
+  }
+
+  for (let j = 7; j >= 1; j--){
+    if (grid[nextPiece.col][j] === null){
+      const piece = nextPiece.piece;
+      const i = nextPiece.col;
+      nextPiece.piece = null;
+
+      if(playerDrop){
+        dropCount--;
+        drawDropCount();
+        window.requestAnimationFrame(function() {
+          fallPieceAnimation(piece, i, 0, j, playerDrop, now());
+        });
+      } else {
+        pieceFinishedFalling(piece, i, j, playerDrop)
+      }
+      break;
+    }
+  }
+}
+
 function pieceMove(dir) {
+  if (nextPiece.piece === null){
+    return;
+  }
+
   nextPiece.col = clamp(nextPiece.col + dir, 1, 7);
   drawDrop();
 }
@@ -341,7 +360,9 @@ document.addEventListener('keydown', event => {
       mainMenuButtonFocused = (mainMenuButtonFocused + 1) % 3;
       drawMainMenu();
     } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
-      mainMenuButtonFocused = Math.abs(mainMenuButtonFocused - 1) % 3;
+      mainMenuButtonFocused = mainMenuButtonFocused - 1;
+      mainMenuButtonFocused = mainMenuButtonFocused >= 0 ? mainMenuButtonFocused : 3 + mainMenuButtonFocused;
+      mainMenuButtonFocused = (mainMenuButtonFocused) % 3;
       drawMainMenu();
     } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
       if (mainMenuButtonFocused === 0){
@@ -382,7 +403,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = true;
+const debugMode = false;
 
 var isLoaded = false;
 var inGame = false;

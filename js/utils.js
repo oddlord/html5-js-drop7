@@ -22,9 +22,13 @@ function clamp(value, min, max){
   return Math.max(min, Math.min(value, max));
 }
 
+function now(){
+  return new Date().getTime();
+}
+
 function sleep(milliseconds){
-  var currentTime = new Date().getTime();
-  while (currentTime + milliseconds >= new Date().getTime()){}
+  var currentTime = now();
+  while (currentTime + milliseconds >= now()){}
 }
 
 function randomIntFromInterval(min, max){
