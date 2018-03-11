@@ -31,10 +31,12 @@ function randomIntFromInterval(min, max){
   return Math.floor(Math.random()*(max-min+1)+min);
 }
 
-function getAllDropCombinations(){
+function getAllDropCombinations(onlyNumbers){
   const combinations = [];
 
-  for (let piece = 1; piece <= 8; piece++){
+  const maxPieceNumber = onlyNumbers ? 7 : 8;
+
+  for (let piece = 1; piece <= maxPieceNumber; piece++){
     for (let col = 1; col <= 7; col++){
       combinations.push({
         col: col,

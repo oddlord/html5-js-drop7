@@ -147,7 +147,11 @@ function checkGameover(){
 
 function nextLevel(){
   level++;
-  score += 7000;
+  if (mode === 'blitz'){
+    score += 17000;
+  } else {
+    score += 7000;
+  }
 
   drawLevel();
 
@@ -222,16 +226,18 @@ function pieceMove(dir) {
 
 function nextPieceReset(){
   nextPiece.col = 4;
-  nextPiece.piece = getRandomPiece(false);
+
+  const onlyNumbers = mode === 'blitz' ? true : false;
+  nextPiece.piece = getRandomPiece(onlyNumbers);
 
   drawDrop();
 }
 
 function gridReset(){
+  const onlyNumbers = mode === 'blitz' ? true : false;
   let piecesToDrop = randomIntFromInterval(minStartingPieces, maxStartingPieces);
-  let combinations = getAllDropCombinations();
+  let combinations = getAllDropCombinations(onlyNumbers);
   while (piecesToDrop > 0 && combinations.length > 0){
-    //debugger;
     const combinationIndex = randomIntFromInterval(0, combinations.length-1);
 
     const gridCopy = createMatrix(grid.length, grid[0].length);
@@ -246,7 +252,7 @@ function gridReset(){
       score = 0;
       copyMatrix(gridCopy, grid);
     } else {
-      combinations = getAllDropCombinations();
+      combinations = getAllDropCombinations(onlyNumbers);
       piecesToDrop--;
     }
   }
@@ -357,7 +363,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = true;
+const debugMode = false;
 
 var isLoaded = false;
 var inGame = false;
