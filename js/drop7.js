@@ -90,6 +90,15 @@ function isNumberedPieceAMatch(i, j){ // check if a piece at given coords is a m
   return false;
 }
 
+function pieceFinishedExploding(i, j, playerAction){
+  breakNeighbours(i, j);
+  drawGrid();
+
+  if (explodingPieces === 0){
+    applyGravity(playerAction);
+  }
+}
+
 function checkMatches(playerAction){
   chain++;
   longestChain = Math.max(longestChain, chain);
@@ -113,12 +122,19 @@ function checkMatches(playerAction){
 
   if (matchedPieces.length > 0){
     for (let matchedPiece of matchedPieces){
-      score += Math.floor(7 * (Math.pow(chain, 2.5)));
+      const matchPoints = Math.floor(7 * (Math.pow(chain, 2.5)));
+      score += matchPoints;
+      const piece = grid[matchedPiece.i][matchedPiece.j];
       grid[matchedPiece.i][matchedPiece.j] = null;
-      breakNeighbours(matchedPiece.i, matchedPiece.j);
+      if (playerAction){
+        explodingPieces++;
+        window.requestAnimationFrame(function() {
+          explodePieceAnimation(piece, matchedPiece.i, matchedPiece.j, now());
+        });
+      } else {
+        pieceFinishedExploding(matchedPiece.i, matchedPiece.j, playerAction);
+      }
     }
-    drawGrid();
-    applyGravity(playerAction);
   }
 }
 
@@ -323,6 +339,7 @@ function resetVars(){
   sequenceNextPiece = 0;
 
   fallingPieces = 0;
+  explodingPieces = 0;
 }
 
 function mainMenu(){
@@ -424,7 +441,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = true;
+const debugMode = false;
 
 var isLoaded = false;
 var inGame = false;
@@ -462,5 +479,6 @@ const sequenceDrops = [
 const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 
 var fallingPieces = 0;
+var explodingPieces = 0;
 
 loadImages();

@@ -86,6 +86,9 @@ const mainMenuButtonPadScale = 0.4;   // WRT button height
 // Animations -------------------
 const msPerCellFall = 100;
 
+const msExplosion = 350;
+const maxWIncScale = 1;
+
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
 
