@@ -116,9 +116,7 @@ function checkMatches(){
   } else {
     if (playerAction){
       if (dropCount === 0){
-        dropCount = getMaxDrops();
         nextLevel();
-        drawDropCount();
       } else {
         dropSequenceDone();
       }
@@ -161,6 +159,9 @@ function nextLevel(){
   } else {
     score += 7000;
   }
+
+  dropCount = getMaxDrops();
+  drawDropCount();
 
   drawLevel();
 
@@ -384,7 +385,7 @@ document.addEventListener('keydown', event => {
         musicEnabled = !musicEnabled;
 
 
-        
+
         // TODO: disable/enable music here
 
 
