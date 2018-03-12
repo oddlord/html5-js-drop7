@@ -262,8 +262,6 @@ function nextPieceReset(){
 }
 
 function gridReset(){
-  playerAction = false;
-
   if (mode === 'sequence'){
     for (let i = 1; i <= 7; i++){
       grid[i][7] = sequenceEmerging[i-1];
@@ -294,8 +292,6 @@ function gridReset(){
       piecesToDrop--;
     }
   }
-
-  playerAction = true;
 }
 
 function resetVars(){
@@ -326,7 +322,9 @@ function startGame(){
   isGameover = false;
 
   grid = createMatrix(8, 8, null);
+  playerAction = false;
   gridReset();
+  playerAction = true;
   resetVars();
   nextPieceReset();
 
