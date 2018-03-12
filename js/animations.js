@@ -44,46 +44,102 @@ function fallAnimDone(piece, i, j){
   }
 }
 
-function explosionAnimStart(piece, i, j){
-  explodingPieces++;
+function explosionAnimStart(matchedPieces, points){
+  explodingPieces += matchedPieces.length;
 
   if (playerAction){
     window.requestAnimationFrame(function() {
-      explosionAnim(piece, i, j, now());
+      explosionAnim(matchedPieces, points, now());
     });
   } else {
-    explosionAnimDone(i, j);
+    matchPointsAnimStart(matchedPieces, points);
   }
 }
 
-function explosionAnim(piece, i, j, startTime){
-  const [x, y] = getCellOrigin(i, j);
-
+function explosionAnim(matchedPieces, points, startTime){
   const elapsedTime = deltaTime(startTime);
 
   if (elapsedTime >= msExplosion){
-    explosionAnimDone(i, j, true);
+    matchPointsAnimStart(matchedPieces, points);
     return;
   }
 
-  const widthIncrease = Math.sin(Math.PI/(2*msExplosion) * elapsedTime) * maxWIncScale * cellWH;
-  const newX = x - widthIncrease/2;
-  const newY = y - widthIncrease/2;
+  for (let matchedPiece of matchedPieces){
+    const piece = matchedPiece.piece;
+    const i = matchedPiece.i;
+    const j = matchedPiece.j;
 
-  drawPieceImgXYScaled(piece, newX, newY, cellWH+widthIncrease, cellWH+widthIncrease);
+    const [x, y] = getCellOrigin(i, j);
+
+    const widthIncrease = Math.sin(Math.PI/(2*msExplosion) * elapsedTime) * maxExplosionWIncScale * cellWH;
+    const newX = x - widthIncrease/2;
+    const newY = y - widthIncrease/2;
+
+    drawPieceImgXYScaled(piece, newX, newY, cellWH+widthIncrease, cellWH+widthIncrease);
+  }
 
   window.requestAnimationFrame(function() {
-    explosionAnim(piece, i, j, startTime);
+    explosionAnim(matchedPieces, points, startTime);
   });
 }
 
-function explosionAnimDone(i, j){
-  grid[i][j] = null;
+function matchPointsAnimStart(matchedPieces, points){
+  for (let matchedPiece of matchedPieces){
+    const i = matchedPiece.i;
+    const j = matchedPiece.j;
 
-  breakNeighbours(i, j);
+    grid[i][j] = null;
+
+    breakNeighbours(i, j);
+  }
+
   drawGrid();
 
-  explodingPieces--;
+  if (playerAction){
+    window.requestAnimationFrame(function() {
+      matchPointAnim(matchedPieces, points, now());
+    });
+  } else {
+    explosionAnimDone(matchedPieces, points);
+  }
+}
+
+function matchPointAnim(matchedPieces, points, startTime){
+  const elapsedTime = deltaTime(startTime);
+
+  if (elapsedTime >= msMatchPoints){
+    explosionAnimDone(matchedPieces, points);
+    return;
+  }
+
+  drawGrid();
+
+  for (let matchedPiece of matchedPieces){
+    const piece = matchedPiece.piece;
+    const i = matchedPiece.i;
+    const j = matchedPiece.j;
+
+    const [x, y] = getCellOrigin(i, j);
+
+    const heightIncrease = Math.sin(Math.PI/(msMatchPoints) * elapsedTime) * maxMatchPointsHIncScale * cellWH;
+    const newY = y - heightIncrease/2;
+
+    context.font = (matchPointsH + heightIncrease) + 'px Arial';
+    context.fillStyle = piece.getPointsColor();
+    context.textAlign = 'center';
+    context.textBaseline = 'top';
+    context.fillText('+'+points, x + cellWH/2, newY);
+  }
+
+  window.requestAnimationFrame(function() {
+    matchPointAnim(matchedPieces, points, startTime);
+  });
+}
+
+function explosionAnimDone(matchedPieces, points){
+  score += points * matchedPieces.length;
+
+  explodingPieces -= matchedPieces.length;
   if (!inAnimation()){
     applyGravity();
   }

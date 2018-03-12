@@ -57,6 +57,10 @@ class NumberedPiece extends Piece {
   getBGColor(){
     return bgNumberedColors[this.number - 1];
   }
+
+  getPointsColor(){
+    return pointsNumberedColors[this.number - 1];
+  }
 }
 
 class HiddenPiece extends Piece {

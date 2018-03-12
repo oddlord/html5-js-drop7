@@ -100,6 +100,7 @@ function checkMatches(){
 
       if (isNumberedPieceAMatch(i, j)){
         matchedPieces.push({
+          piece: piece,
           i: i,
           j: j
         });
@@ -110,13 +111,8 @@ function checkMatches(){
   if (matchedPieces.length > 0){
     chain++;
     longestChain = Math.max(longestChain, chain);
-
-    for (let matchedPiece of matchedPieces){
-      const matchPoints = Math.floor(7 * (Math.pow(chain, 2.5)));
-      score += matchPoints;
-      const piece = grid[matchedPiece.i][matchedPiece.j];
-      explosionAnimStart(piece, matchedPiece.i, matchedPiece.j);
-    }
+    const matchPoints = Math.floor(7 * (Math.pow(chain, 2.5)));
+    explosionAnimStart(matchedPieces, matchPoints);
   } else {
     if (playerAction){
       if (dropCount === 0){

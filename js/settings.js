@@ -14,6 +14,15 @@ const bgNumberedColors = [          // used for game BG (depends on current piec
   '#2a5e8b'   // 7 piece color
 ];
 const bgSolidColor = '#d8e4ea'; // solid piece color
+const pointsNumberedColors = [  // used for match points (depends on current piece)
+  '#68c076',  // 1 piece color
+  '#fed450',  // 2 piece color
+  '#fcb051',  // 3 piece color
+  '#e84d60',  // 4 piece color
+  '#eb75cc',  // 5 piece color
+  '#4dd1fa',  // 6 piece color
+  'white'     // 7 piece color
+]
 
 const solidValue = 200;
 const crackedValue = 100;
@@ -59,6 +68,8 @@ const dropCountBorderWScale = 0.1;  // WRT drop counter width
 
 const modeBestWScale = 0.35; // WRT grid width
 
+const matchPointsHScale = 0.4; // WRT cell width
+
 // All these must sum to 1
 const gameoverScoreTextHScale = 0.05;   // WTR gameover lower section height
 const gameoverScoreHScale = 0.15;       // WTR gameover lower section height
@@ -87,7 +98,10 @@ const mainMenuButtonPadScale = 0.4;   // WRT button height
 const msPerCellFall = 100;
 
 const msExplosion = 350;
-const maxWIncScale = 1;
+const maxExplosionWIncScale = 1;
+
+const msMatchPoints = 400;
+const maxMatchPointsHIncScale = 0.4;
 
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
@@ -111,6 +125,8 @@ function setDimensions(){
 
   modeBestW = gridWH * modeBestWScale;
   modeBestTextH = modeBestH / 2;
+
+  matchPointsH = cellWH * matchPointsHScale;
 
   gameoverImgNonWritableH = (450/1080)*gridWH;
   gameoverLowerSectionH = canvasH - gameoverImgNonWritableH;
@@ -161,6 +177,8 @@ var levelH;
 
 var modeBestW;
 var modeBestTextH;
+
+var matchPointsH;
 
 var gameoverImgNonWritableH;
 var gameoverLowerSectionH;
