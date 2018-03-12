@@ -68,7 +68,8 @@ const dropCountBorderWScale = 0.1;  // WRT drop counter width
 
 const modeBestWScale = 0.35; // WRT grid width
 
-const matchPointsHScale = 0.4; // WRT cell width
+const matchPointsHScale = 0.4;  // WRT cell width
+const chainHScale = 0.4;        // WRT cell width
 
 // All these must sum to 1
 const gameoverScoreTextHScale = 0.05;   // WTR gameover lower section height
@@ -100,8 +101,10 @@ const msPerCellFall = 100;
 const msExplosion = 350;
 const maxExplosionWIncScale = 1;
 
-const msMatchPoints = 400;
-const maxMatchPointsHIncScale = 0.4;
+const msMatchPoints = 350;
+const maxMatchPointsHIncScale = 0.25;
+
+const maxChainHIncScale = 0.3;
 
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
@@ -127,6 +130,7 @@ function setDimensions(){
   modeBestTextH = modeBestH / 2;
 
   matchPointsH = cellWH * matchPointsHScale;
+  chainH = cellWH * chainHScale;
 
   gameoverImgNonWritableH = (450/1080)*gridWH;
   gameoverLowerSectionH = canvasH - gameoverImgNonWritableH;
@@ -179,6 +183,7 @@ var modeBestW;
 var modeBestTextH;
 
 var matchPointsH;
+var chainH;
 
 var gameoverImgNonWritableH;
 var gameoverLowerSectionH;

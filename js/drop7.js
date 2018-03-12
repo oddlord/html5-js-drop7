@@ -412,7 +412,7 @@ document.addEventListener('keydown', event => {
   }
 });
 
-const debugMode = true;
+const debugMode = false;
 
 var isLoaded = false;
 var inGame = false;

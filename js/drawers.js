@@ -314,3 +314,8 @@ function drawColumn(i){
     }
   }
 }
+
+function drawPlayArea(){
+  drawDrop();
+  drawGrid();
+}

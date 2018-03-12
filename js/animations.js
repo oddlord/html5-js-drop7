@@ -52,7 +52,7 @@ function explosionAnimStart(matchedPieces, points){
       explosionAnim(matchedPieces, points, now());
     });
   } else {
-    matchPointsAnimStart(matchedPieces, points);
+    matchPointsAnimStart(matchedPieces, points, now());
   }
 }
 
@@ -60,9 +60,13 @@ function explosionAnim(matchedPieces, points, startTime){
   const elapsedTime = deltaTime(startTime);
 
   if (elapsedTime >= msExplosion){
-    matchPointsAnimStart(matchedPieces, points);
+    matchPointsAnimStart(matchedPieces, points, startTime);
     return;
   }
+
+  drawPlayArea();
+
+  updateChain(elapsedTime);
 
   for (let matchedPiece of matchedPieces){
     const piece = matchedPiece.piece;
@@ -83,7 +87,7 @@ function explosionAnim(matchedPieces, points, startTime){
   });
 }
 
-function matchPointsAnimStart(matchedPieces, points){
+function matchPointsAnimStart(matchedPieces, points, startTime){
   for (let matchedPiece of matchedPieces){
     const i = matchedPiece.i;
     const j = matchedPiece.j;
@@ -97,7 +101,7 @@ function matchPointsAnimStart(matchedPieces, points){
 
   if (playerAction){
     window.requestAnimationFrame(function() {
-      matchPointAnim(matchedPieces, points, now());
+      matchPointAnim(matchedPieces, points, startTime);
     });
   } else {
     explosionAnimDone(matchedPieces, points);
@@ -105,14 +109,16 @@ function matchPointsAnimStart(matchedPieces, points){
 }
 
 function matchPointAnim(matchedPieces, points, startTime){
-  const elapsedTime = deltaTime(startTime);
+  const elapsedTime = deltaTime(startTime + msExplosion);
 
   if (elapsedTime >= msMatchPoints){
     explosionAnimDone(matchedPieces, points);
     return;
   }
 
-  drawGrid();
+  drawPlayArea();
+
+  updateChain(elapsedTime + msExplosion);
 
   for (let matchedPiece of matchedPieces){
     const piece = matchedPiece.piece;
@@ -124,7 +130,7 @@ function matchPointAnim(matchedPieces, points, startTime){
     const heightIncrease = Math.sin(Math.PI/(msMatchPoints) * elapsedTime) * maxMatchPointsHIncScale * cellWH;
     const newY = y - heightIncrease/2;
 
-    context.font = (matchPointsH + heightIncrease) + 'px Arial';
+    context.font = 'bold ' + (matchPointsH + heightIncrease) + 'px Arial';
     context.fillStyle = piece.getPointsColor();
     context.textAlign = 'center';
     context.textBaseline = 'top';
@@ -141,6 +147,19 @@ function explosionAnimDone(matchedPieces, points){
 
   explodingPieces -= matchedPieces.length;
   if (!inAnimation()){
+    drawPlayArea();
     applyGravity();
+  }
+}
+
+function updateChain(elapsedTime){
+  if (chain > 1){
+    const chainHIncrease = Math.sin(Math.PI/(msExplosion + msMatchPoints) * elapsedTime) * maxChainHIncScale * cellWH;
+
+    context.font = (chainH+chainHIncrease) + 'px Arial';
+    context.fillStyle = darkBlue;
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText('CHAIN x'+chain, gridWH/2, dropY + cellWH/2);
   }
 }
