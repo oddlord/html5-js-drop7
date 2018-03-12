@@ -295,11 +295,11 @@ function drawMainMenu(){
   context.font = mainMenuHighscoreH + 'px Arial';
   context.fillText(highscoreText, gridWH/2, mainMenuButtonSequenceHighscoreY);
 
-  context.drawImage(images[drop7ImgName], 0, canvasH - mainMenuLogoH, gridWH, mainMenuLogoH);
+  context.drawImage(images[drop7BlueImgName], 0, canvasH - mainMenuLogoH, gridWH, mainMenuLogoH);
 
   context.fillStyle = 'white';
   context.textBaseline = 'bottom';
-  context.font = mainMenuCopyrightH + 'px Arial';
+  context.font = copyrightH + 'px Arial';
   context.fillText('\u00A9 2015 Zynga Inc. All rights reserved.', gridWH/2, canvasH);
 }
 
@@ -325,4 +325,50 @@ function drawColumn(i){
 function drawPlayArea(){
   drawDrop();
   drawGrid();
+}
+
+function drawPauseMenu(){
+  context.fillStyle = pauseLightGrey;
+  context.fillRect(0, 0, pauseW, canvasH);
+
+  context.textAlign = 'center';
+
+  if (inGame){
+    context.fillStyle = buttonGreen;
+    context.fillRect(pauseButtonRestartX, pauseButtonRestartY, buttonW, buttonH);
+    context.fillStyle = 'white';
+    context.textBaseline = 'middle';
+    context.font = buttonTextH + 'px Arial';
+    context.fillText('Restart Game', pauseW/2, pauseButtonRestartY + buttonH/2);
+    if (pauseButtonFocused === 0){
+      context.lineWidth = buttonBorderFocusedW;
+      context.strokeStyle = 'white';
+      context.beginPath();
+      context.rect(pauseButtonRestartX, pauseButtonRestartY, buttonW, buttonH);
+      context.stroke();
+    }
+
+    context.fillStyle = buttonGreen;
+    context.fillRect(pauseButtonMainMenuX, pauseButtonMainMenuY, buttonW, buttonH);
+    context.fillStyle = 'white';
+    context.textBaseline = 'middle';
+    context.font = buttonTextH + 'px Arial';
+    context.fillText('Main Menu', pauseW/2, pauseButtonMainMenuY + buttonH/2);
+    if (pauseButtonFocused === 1){
+      context.lineWidth = buttonBorderFocusedW;
+      context.strokeStyle = 'white';
+      context.beginPath();
+      context.rect(pauseButtonMainMenuX, pauseButtonMainMenuY, buttonW, buttonH);
+      context.stroke();
+    }
+  }
+
+  // TODO: Music & sound buttons here!
+
+  context.drawImage(images[drop7GreyImgName], 0, canvasH - pauseLogoH, pauseW, pauseLogoH);
+
+  context.fillStyle = 'black';
+  context.textBaseline = 'bottom';
+  context.font = copyrightH + 'px Arial';
+  context.fillText('Drop7 \u00A9 2015 Zynga Inc.', pauseW/2, canvasH);
 }

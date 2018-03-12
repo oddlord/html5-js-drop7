@@ -89,7 +89,7 @@ function explosionAnim(matchedPieces, points, startTime){
 
 function matchPointsAnimStart(matchedPieces, points, startTime){
   for (let matchedPiece of matchedPieces){
-    if (playerAction){
+    if (playerAction && soundEnabled){
       playAudio(dingAudioName, false);
     }
 

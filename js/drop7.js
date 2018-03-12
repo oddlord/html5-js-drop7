@@ -362,6 +362,64 @@ document.addEventListener('keydown', event => {
 
   const unknownButtonPressedStr = 'Unknown error with button selection.';
 
+  if (pause){
+    if (keyCode === 40 || keyCode === 83){ // S or down arrow
+      if (inGame){
+        pauseButtonFocused = (pauseButtonFocused + 1) % 2;
+      }
+      drawPauseMenu();
+    } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
+      if (inGame){
+        pauseButtonFocused = Math.abs(pauseButtonFocused - 1) % 2;
+      }
+      drawPauseMenu();
+    } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
+      if (pauseButtonFocused === 0){
+        pause = false;
+        startGame();
+      } else if (pauseButtonFocused === 1){
+        pause = false;
+        mainMenu();
+      } else if (pauseButtonFocused === 2){
+        musicEnabled = !musicEnabled;
+
+
+        
+        // TODO: disable/enable music here
+
+
+
+        drawPauseMenu();
+      } else if (pauseButtonFocused === 3){
+        soundEnabled = !soundEnabled;
+        drawPauseMenu();
+      } else {
+        throw new Error(unknownButtonPressedStr);
+      }
+    } else if(keyCode === 27){ // ESC key
+      pause = false;
+      if (inMenu){
+        drawMainMenu();
+      } else if (inGame){
+        drawGame();
+      }
+    }
+
+    return;
+  }
+
+  if ((inMenu || inGame) && !pause){
+    if(keyCode === 27){ // ESC key
+      pause = true;
+      if (inMenu){
+        pauseButtonFocused = 2;
+      } else if (inGame){
+        pauseButtonFocused = 0;
+      }
+      drawPauseMenu();
+    }
+  }
+
   if (inMenu){
     if (keyCode === 40 || keyCode === 83){ // S or down arrow
       mainMenuButtonFocused = (mainMenuButtonFocused + 1) % 3;
@@ -410,14 +468,16 @@ document.addEventListener('keydown', event => {
   }
 });
 
-playAudio(musicAudioName, true);
-
 const debugMode = false;
 
 var isLoaded = false;
 var inGame = false;
 var isGameover = false;
 var inMenu = false;
+
+var pause = false;
+var musicEnabled = true;
+var soundEnabled = true;
 
 var playerAction = false;
 
@@ -442,6 +502,7 @@ const scores = {
 
 gameoverButtonFocused = 0;
 mainMenuButtonFocused = 0;
+pauseButtonFocused = 0;
 
 var sequenceNextPiece = 0;
 const sequenceDrops = [
@@ -453,5 +514,7 @@ const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 
 var fallingPieces = 0;
 var explodingPieces = 0;
+
+playAudio(musicAudioName, true);
 
 loadImages();

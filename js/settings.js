@@ -4,6 +4,7 @@ const darkBlue = '#223f5f';         // used for text and other elements
 const lightBlue = '#3a84c1';        // used for gameover BG
 const newHighscoreBlue = '#57cbf0'; // used for the "New Highscore" text
 const buttonGreen = '#65be7a';      // used for buttons
+const pauseLightGrey = '#cfd0d4';   // used for pause BG
 const bgNumberedColors = [          // used for game BG (depends on current piece)
   '#488557',  // 1 piece color
   '#b19438',  // 2 piece color
@@ -46,7 +47,8 @@ const numberedPiecesImgNames = [
 ];
 const solidImgName = 'solid.png';
 const crackedImgName = 'cracked.png';
-const drop7ImgName = 'drop7.png';
+const drop7BlueImgName = 'drop7-blue.png';
+const drop7GreyImgName = 'drop7-grey.png';
 const gameoverImgName = 'gameover.png';
 const avgScoreUpImgName = 'avg-score-up.png';
 const avgScoreDownImgName = 'avg-score-down.png';
@@ -91,7 +93,7 @@ const gameoverStatPadScale = 0.4; // WRT gameover stat height
 const buttonWScale = 4;                 // WRT button height
 const buttonTextHScale = 0.4;           // WRT button height
 const buttonBorderWScale = 0.025;       // WRT button height
-const buttonBorderFocusedWScale = 0.1;  // WRT button height
+const buttonBorderFocusedWScale = 0.075;  // WRT button height
 
 const gameoverButtonPadScale = 0.4; // WRT button height
 
@@ -100,9 +102,16 @@ const mainMenuUpperVPadScale = 0.15; // WRT canvas height
 const mainMenuButtonPadScale = 0.15;    // WRT button height
 const mainMenuHighscoreHScale = 0.35;   // WRT button height
 const mainMenuHighscorePadScale = 0.6;  // WRT button height
-const mainMenuCopyrightHScale = 0.2;    // WRT button height
 
-const mainMenuLogoRatio = 1080/449;
+const copyrightHScale = 0.2;    // WRT button height
+
+const logoRatio = 1080/449;
+
+const pauseWScale = 0.8;  // WRT grid width
+
+const pauseUpperVPadScale = 0.15; // WRT canvas height
+
+const pauseButtonPadScale = 0.5;  // WRT button height
 
 // Animations -------------------
 const msPerCellFall = 100;
@@ -110,7 +119,7 @@ const msPerCellFall = 100;
 const msExplosion = 350;
 const maxExplosionWIncScale = 1;
 
-const msMatchPoints = 350;
+const msMatchPoints = 450;
 const maxMatchPointsHIncScale = 0.25;
 
 const maxChainHIncScale = 0.3;
@@ -168,9 +177,17 @@ function setDimensions(){
   mainMenuButtonPad = buttonH * mainMenuButtonPadScale;
   mainMenuHighscoreH = buttonH * mainMenuHighscoreHScale;
   mainMenuHighscorePad = buttonH * mainMenuHighscorePadScale;
-  mainMenuCopyrightH = buttonH * mainMenuCopyrightHScale;
+  copyrightH = buttonH * copyrightHScale;
 
-  mainMenuLogoH = gridWH / mainMenuLogoRatio;
+  mainMenuLogoH = gridWH / logoRatio;
+
+  pauseW = gridWH * pauseWScale;
+
+  pauseUpperVPad = canvasH * pauseUpperVPadScale;
+
+  pauseButtonPad = buttonH * pauseButtonPadScale;
+
+  pauseLogoH = pauseW / logoRatio;
 }
 
 var canvasH;
@@ -225,9 +242,18 @@ var mainMenuUpperVPad;
 var mainMenuButtonPad;
 var mainMenuHighscoreH;
 var mainMenuHighscorePad;
-var mainMenuCopyrightH;
+
+var copyrightH;
 
 var mainMenuLogoH;
+
+var pauseW;
+
+var pauseUpperVPad;
+
+var pauseButtonPad;
+
+var pauseLogoH;
 
 setDimensions();
 
@@ -326,6 +352,15 @@ function setOrigins(){
 
   mainMenuButtonSequenceHighscoreX = mainMenuButtonsX + 0;
   mainMenuButtonSequenceHighscoreY = mainMenuButtonsY + 3*buttonH + 3*mainMenuButtonPad + 2*mainMenuHighscoreH + 2*mainMenuHighscorePad;
+
+  pauseButtonsX = 0;
+  pauseButtonsY = 0 + pauseUpperVPad;
+
+  pauseButtonRestartX = pauseButtonsX + pauseW/2 - buttonW/2;
+  pauseButtonRestartY = pauseButtonsY + 0;
+
+  pauseButtonMainMenuX = pauseButtonsX + pauseW/2 - buttonW/2;
+  pauseButtonMainMenuY = pauseButtonsY + buttonH + pauseButtonPad;
 }
 
 var playAreaX;
@@ -417,5 +452,14 @@ var mainMenuButtonSequenceY;
 
 var mainMenuButtonSequenceHighscoreX;
 var mainMenuButtonSequenceHighscoreY;
+
+var pauseButtonsX;
+var pauseButtonsY;
+
+var pauseButtonRestartX;
+var pauseButtonRestartY;
+
+var pauseButtonMainMenuX;
+var pauseButtonMainMenuY;
 
 setOrigins();
