@@ -294,6 +294,13 @@ function drawMainMenu(){
   context.textBaseline = 'top';
   context.font = mainMenuHighscoreH + 'px Arial';
   context.fillText(highscoreText, gridWH/2, mainMenuButtonSequenceHighscoreY);
+
+  context.drawImage(images[drop7ImgName], 0, canvasH - mainMenuLogoH, gridWH, mainMenuLogoH);
+
+  context.fillStyle = 'white';
+  context.textBaseline = 'bottom';
+  context.font = mainMenuCopyrightH + 'px Arial';
+  context.fillText('\u00A9 2015 Zynga Inc. All rights reserved.', gridWH/2, canvasH);
 }
 
 function drawColumn(i){

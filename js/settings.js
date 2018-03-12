@@ -46,6 +46,7 @@ const numberedPiecesImgNames = [
 ];
 const solidImgName = 'solid.png';
 const crackedImgName = 'cracked.png';
+const drop7ImgName = 'drop7.png';
 const gameoverImgName = 'gameover.png';
 const avgScoreUpImgName = 'avg-score-up.png';
 const avgScoreDownImgName = 'avg-score-down.png';
@@ -90,10 +91,14 @@ const buttonBorderFocusedWScale = 0.1;  // WRT button height
 
 const gameoverButtonPadScale = 0.4; // WRT button height
 
-const mainMenuUpperVPadScale = 0.2; // WRT canvas height
+const mainMenuUpperVPadScale = 0.15; // WRT canvas height
 
-const mainMenuHighscoreHScale = 0.35;  // WRT button height
-const mainMenuButtonPadScale = 0.4;   // WRT button height
+const mainMenuButtonPadScale = 0.15;    // WRT button height
+const mainMenuHighscoreHScale = 0.35;   // WRT button height
+const mainMenuHighscorePadScale = 0.6;  // WRT button height
+const mainMenuCopyrightHScale = 0.2;    // WRT button height
+
+const mainMenuLogoRatio = 1080/449;
 
 // Animations -------------------
 const msPerCellFall = 100;
@@ -156,8 +161,12 @@ function setDimensions(){
 
   mainMenuUpperVPad = canvasH * mainMenuUpperVPadScale;
 
-  mainMenuHighscoreH = buttonH * mainMenuHighscoreHScale;
   mainMenuButtonPad = buttonH * mainMenuButtonPadScale;
+  mainMenuHighscoreH = buttonH * mainMenuHighscoreHScale;
+  mainMenuHighscorePad = buttonH * mainMenuHighscorePadScale;
+  mainMenuCopyrightH = buttonH * mainMenuCopyrightHScale;
+
+  mainMenuLogoH = gridWH / mainMenuLogoRatio;
 }
 
 var canvasH;
@@ -209,8 +218,12 @@ var gameoverButtonPad;
 
 var mainMenuUpperVPad;
 
-var mainMenuHighscoreH;
 var mainMenuButtonPad;
+var mainMenuHighscoreH;
+var mainMenuHighscorePad;
+var mainMenuCopyrightH;
+
+var mainMenuLogoH;
 
 setDimensions();
 
@@ -296,19 +309,19 @@ function setOrigins(){
   mainMenuButtonClassicY = mainMenuButtonsY + 0;
 
   mainMenuButtonClassicHighscoreX = mainMenuButtonsX + 0;
-  mainMenuButtonClassicHighscoreY = mainMenuButtonsY + buttonH;
+  mainMenuButtonClassicHighscoreY = mainMenuButtonsY + buttonH + mainMenuButtonPad;
 
   mainMenuButtonBlitzX = mainMenuButtonsX + gridWH/2 - buttonW/2;
-  mainMenuButtonBlitzY = mainMenuButtonsY + buttonH + mainMenuHighscoreH + mainMenuButtonPad;
+  mainMenuButtonBlitzY = mainMenuButtonsY + buttonH + mainMenuButtonPad + mainMenuHighscoreH + mainMenuHighscorePad;
 
   mainMenuButtonBlitzHighscoreX = mainMenuButtonsX + 0;
-  mainMenuButtonBlitzHighscoreY = mainMenuButtonsY + 2*buttonH + mainMenuHighscoreH + mainMenuButtonPad;
+  mainMenuButtonBlitzHighscoreY = mainMenuButtonsY + 2*buttonH + 2*mainMenuButtonPad + mainMenuHighscoreH + mainMenuHighscorePad;
 
   mainMenuButtonSequenceX = mainMenuButtonsX + gridWH/2 - buttonW/2;
-  mainMenuButtonSequenceY = mainMenuButtonsY + 2*buttonH + 2*mainMenuHighscoreH + 2*mainMenuButtonPad;
+  mainMenuButtonSequenceY = mainMenuButtonsY + 2*buttonH + 2*mainMenuButtonPad + 2*mainMenuHighscoreH + 2*mainMenuHighscorePad;
 
   mainMenuButtonSequenceHighscoreX = mainMenuButtonsX + 0;
-  mainMenuButtonSequenceHighscoreY = mainMenuButtonsY + 3*buttonH + 2*mainMenuHighscoreH + 2*mainMenuButtonPad;
+  mainMenuButtonSequenceHighscoreY = mainMenuButtonsY + 3*buttonH + 3*mainMenuButtonPad + 2*mainMenuHighscoreH + 2*mainMenuHighscorePad;
 }
 
 var playAreaX;
