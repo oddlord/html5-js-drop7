@@ -125,9 +125,14 @@ function sp(number){
 
 function inAnimation(){
   let inAnimation = false;
-  
+
   inAnimation |= fallingPieces > 0;
   inAnimation |= explodingPieces > 0;
 
   return inAnimation;
+}
+
+function playAudio(audioName){
+  const audio = new Audio('audio/'+audioName);
+  audio.play();
 }
