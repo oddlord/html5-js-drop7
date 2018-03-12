@@ -26,6 +26,10 @@ function now(){
   return new Date().getTime();
 }
 
+function deltaTime(startTime){
+  return (now() - startTime);
+}
+
 function sleep(milliseconds){
   var currentTime = now();
   while (currentTime + milliseconds >= now()){}
@@ -117,4 +121,13 @@ function np(number){
 
 function sp(number){
   return new SolidPiece(new NumberedPiece(number));
+}
+
+function inAnimation(){
+  let inAnimation = false;
+  
+  inAnimation |= fallingPieces > 0;
+  inAnimation |= explodingPieces > 0;
+
+  return inAnimation;
 }

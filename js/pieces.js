@@ -20,6 +20,10 @@ class Piece {
     this._imgName = imgName;
   }
 
+  isNumbered(){
+    return (this instanceof NumberedPiece);
+  }
+
   isCrackable(){
     return (this instanceof HiddenPiece);
   }

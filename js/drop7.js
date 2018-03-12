@@ -1,4 +1,6 @@
-function applyGravity(playerAction){
+function applyGravity(){
+  let noPieceFell = true;
+
   for (let i = 1; i <= 7; i++){
     for (let j = 7; j >= 1; j--){
       if (j === 7 || grid[i][j] === null){
@@ -15,19 +17,15 @@ function applyGravity(playerAction){
       }
 
       if (j !== j2){
+        noPieceFell = false;
         const piece = grid[i][j];
-        grid[i][j2] = new PlaceholderPiece();
-        grid[i][j] = null;
-        if(playerAction){
-          fallingPieces++;
-          window.requestAnimationFrame(function() {
-            fallPieceAnimation(piece, i, j, j2, false, now());
-          });
-        } else {
-          pieceFinishedFalling(piece, i, j2, false, playerAction);
-        }
+        fallAnimStart(piece, i, j, j2);
       }
     }
+  }
+
+  if (noPieceFell){
+    checkMatches();
   }
 }
 
@@ -90,24 +88,13 @@ function isNumberedPieceAMatch(i, j){ // check if a piece at given coords is a m
   return false;
 }
 
-function pieceFinishedExploding(i, j, playerAction){
-  breakNeighbours(i, j);
-  drawGrid();
-
-  if (explodingPieces === 0){
-    applyGravity(playerAction);
-  }
-}
-
-function checkMatches(playerAction){
-  chain++;
-  longestChain = Math.max(longestChain, chain);
+function checkMatches(){
   const matchedPieces = [];
 
   for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
       const piece = grid[i][j];
-      if (piece === null || piece.isCrackable()){
+      if (piece === null || !piece.isNumbered()){
         continue;
       }
 
@@ -121,18 +108,23 @@ function checkMatches(playerAction){
   }
 
   if (matchedPieces.length > 0){
+    chain++;
+    longestChain = Math.max(longestChain, chain);
+
     for (let matchedPiece of matchedPieces){
       const matchPoints = Math.floor(7 * (Math.pow(chain, 2.5)));
       score += matchPoints;
       const piece = grid[matchedPiece.i][matchedPiece.j];
-      grid[matchedPiece.i][matchedPiece.j] = null;
-      if (playerAction){
-        explodingPieces++;
-        window.requestAnimationFrame(function() {
-          explodePieceAnimation(piece, matchedPiece.i, matchedPiece.j, now());
-        });
+      explosionAnimStart(piece, matchedPiece.i, matchedPiece.j);
+    }
+  } else {
+    if (playerAction){
+      if (dropCount === 0){
+        dropCount = getMaxDrops();
+        nextLevel();
+        drawDropCount();
       } else {
-        pieceFinishedExploding(matchedPiece.i, matchedPiece.j, playerAction);
+        dropSequenceDone();
       }
     }
   }
@@ -186,6 +178,10 @@ function nextLevel(){
       grid[i][7] = SolidPiece.getRandomSolidPiece();
     }
   }
+
+  drawGrid();
+
+  checkMatches();
 }
 
 function checkEmptyGrid(){
@@ -204,30 +200,10 @@ function checkEmptyGrid(){
   }
 }
 
-function pieceFinishedFalling(piece, i, j, playerAction){
-  grid[i][j] = piece;
-
-  if (fallingPieces === 0){
-    drawGrid();
-    drawDrop();
-    checkMatches(playerAction);
-    checkEmptyGrid();
-  }
-}
-
-function pieceFinishedDropping(piece, i, j, playerAction){
-  grid[i][j] = piece;
-
-  if (playerAction && dropCount === 0){
-    dropCount = getMaxDrops();
-    nextLevel();
-    drawDropCount();
-  }
-
+function dropSequenceDone(){
   drawDrop();
   drawGrid();
 
-  checkMatches(playerAction);
   checkEmptyGrid();
 
   checkGameover();
@@ -241,7 +217,7 @@ function pieceFinishedDropping(piece, i, j, playerAction){
   }
 }
 
-function pieceDrop(playerAction) {
+function pieceDrop() {
   if (nextPiece.piece === null){
     return;
   }
@@ -255,18 +231,11 @@ function pieceDrop(playerAction) {
       const piece = nextPiece.piece;
       const i = nextPiece.col;
       nextPiece.piece = null;
-      grid[i][j] = new PlaceholderPiece();
 
-      if(playerAction){
-        dropCount--;
-        drawDropCount();
-        fallingPieces++;
-        window.requestAnimationFrame(function() {
-          fallPieceAnimation(piece, i, 0, j, true, now());
-        });
-      } else {
-        pieceFinishedDropping(piece, i, j, playerAction);
-      }
+      dropCount--;
+      drawDropCount();
+      fallAnimStart(piece, i, 0, j);
+
       break;
     }
   }
@@ -297,6 +266,8 @@ function nextPieceReset(){
 }
 
 function gridReset(){
+  playerAction = false;
+
   if (mode === 'sequence'){
     for (let i = 1; i <= 7; i++){
       grid[i][7] = sequenceEmerging[i-1];
@@ -316,7 +287,7 @@ function gridReset(){
 
     nextPiece.col = combinations[combinationIndex].col;
     nextPiece.piece = combinations[combinationIndex].piece;
-    pieceDrop(false);
+    pieceDrop();
 
     if (score > 0){
       combinations.splice(combinationIndex, 1);
@@ -327,6 +298,8 @@ function gridReset(){
       piecesToDrop--;
     }
   }
+
+  playerAction = true;
 }
 
 function resetVars(){
@@ -389,9 +362,11 @@ document.addEventListener('keydown', event => {
     }
   }
 
-  if (!isLoaded){
+  if (!isLoaded || inAnimation()){
     return;
   }
+
+  const unknownButtonPressedStr = 'Unknown error with button selection.';
 
   if (inMenu){
     if (keyCode === 40 || keyCode === 83){ // S or down arrow
@@ -410,7 +385,7 @@ document.addEventListener('keydown', event => {
       } else if (mainMenuButtonFocused === 2) {
         mode = 'sequence';
       } else {
-        throw new Error('Unknown error with button selection.');
+        throw new Error(unknownButtonPressedStr);
       }
       startGame();
     }
@@ -420,7 +395,7 @@ document.addEventListener('keydown', event => {
     } else if (keyCode === 39 || keyCode === 68){ // D or right arrow
       pieceMove(1);
     } else if (keyCode === 40 || keyCode === 83){ // S or down arrow
-      pieceDrop(true);
+      pieceDrop();
     }
   } else if (isGameover){
     if (keyCode === 40 || keyCode === 83){ // S or down arrow
@@ -435,18 +410,20 @@ document.addEventListener('keydown', event => {
       } else if (gameoverButtonFocused === 1){
         mainMenu();
       } else {
-        throw new Error('Unknown error with button selection.');
+        throw new Error(unknownButtonPressedStr);
       }
     }
   }
 });
 
-const debugMode = false;
+const debugMode = true;
 
 var isLoaded = false;
 var inGame = false;
 var isGameover = false;
 var inMenu = false;
+
+var playerAction = false;
 
 let grid;
 const nextPiece = {

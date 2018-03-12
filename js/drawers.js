@@ -297,7 +297,7 @@ function drawMainMenu(){
 }
 
 function drawColumn(i){
-  [x, y] = getCellOrigin(i, 0);
+  const [x, y] = getCellOrigin(i, 0);
   context.clearRect(x, y, cellWH, playAreaH);
 
   context.fillStyle = cellBlue;
@@ -313,52 +313,4 @@ function drawColumn(i){
       drawPieceImg(piece, i, j);
     }
   }
-}
-
-function fallPieceAnimation(piece, i, startJ, endJ, isDrop, startTime){
-  [startX, startY] = getCellOrigin(i, startJ);
-  [endX, endY] = getCellOrigin(i, endJ);
-  const hPerMsFall = cellWH / msPerCellFall;
-
-  const elapsedTime = now() - startTime;
-  const currentY = startY + elapsedTime*hPerMsFall;
-
-  if (currentY >= endY){
-    fallingPieces--;
-    if (isDrop){
-      pieceFinishedDropping(piece, i, endJ, true);
-    } else {
-      pieceFinishedFalling(piece, i, endJ, true);
-    }
-    return;
-  }
-
-  drawColumn(i);
-  drawPieceImgXY(piece, endX, currentY);
-
-  window.requestAnimationFrame(function() {
-    fallPieceAnimation(piece, i, startJ, endJ, isDrop, startTime);
-  });
-}
-
-function explodePieceAnimation(piece, i, j, startTime){
-  [x, y] = getCellOrigin(i, j);
-
-  const elapsedTime = now() - startTime;
-
-  if (elapsedTime >= msExplosion){
-    explodingPieces--;
-    pieceFinishedExploding(i, j, true);
-    return;
-  }
-
-  const widthIncrease = Math.sin(Math.PI/(2*msExplosion) * elapsedTime) * maxWIncScale * cellWH;
-  const newX = x - widthIncrease/2;
-  const newY = y - widthIncrease/2;
-
-  drawPieceImgXYScaled(piece, newX, newY, cellWH+widthIncrease, cellWH+widthIncrease);
-
-  window.requestAnimationFrame(function() {
-    explodePieceAnimation(piece, i, j, startTime);
-  });
 }
