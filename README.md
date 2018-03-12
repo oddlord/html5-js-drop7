@@ -38,6 +38,8 @@ To move through menus, use W/S (up/down arrow keys) to move through the options 
 
 All the rights over the original Drop7 games belongs to Zynga Inc.
 
+The music is the track [Retroland Recital](https://www.youtube.com/watch?v=JVUZq5etFzQ) by [TeknoAXE](http://teknoaxe.com/).
+
 The ding sound is a modification of the [Ding Ding Small Bell](https://freesound.org/people/JohnsonBrandEditing/sounds/173932/) audio by [JohnsonBrandEditing](https://freesound.org/people/JohnsonBrandEditing/).
 
 Everything else, including images and HTML5/CSS/Javascript code, is made entirely by myself.

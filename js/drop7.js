@@ -410,6 +410,8 @@ document.addEventListener('keydown', event => {
   }
 });
 
+playAudio(musicAudioName, true);
+
 const debugMode = false;
 
 var isLoaded = false;
