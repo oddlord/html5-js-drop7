@@ -49,3 +49,5 @@ Everything else, including images and HTML5/CSS/Javascript code, is made entirel
 ## Disclaimer
 
 This game has been tested only on Google Chrome 65, any other browser might not play the game as intended.
+
+This game also doesn't provide any feature for saving the player progress, so highscores and average scores will persist only as long as the page is not refreshed.
