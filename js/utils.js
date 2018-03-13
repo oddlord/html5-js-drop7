@@ -141,4 +141,6 @@ function playAudio(audioName, loop){
     }, false);
   }
   audio.play();
+
+  return audio;
 }

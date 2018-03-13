@@ -365,13 +365,19 @@ document.addEventListener('keydown', event => {
 
   if (pause){
     if (keyCode === 40 || keyCode === 83){ // S or down arrow
-      if (inGame){
-        pauseButtonFocused = (pauseButtonFocused + 1) % 2;
+      if (inMenu){
+        pauseButtonFocused = ((pauseButtonFocused-2 + 1) % 2) + 2;
+      } else if (inGame){
+        pauseButtonFocused = (pauseButtonFocused + 1) % 4;
       }
       drawPauseMenu();
     } else if (keyCode === 38 || keyCode === 87){ // W or up arrow
-      if (inGame){
-        pauseButtonFocused = Math.abs(pauseButtonFocused - 1) % 2;
+      if (inMenu){
+        pauseButtonFocused = (Math.abs(pauseButtonFocused-2 - 1) % 2) + 2;
+      } else if (inGame){
+        pauseButtonFocused = pauseButtonFocused - 1;
+        pauseButtonFocused = pauseButtonFocused >= 0 ? pauseButtonFocused : 4 + pauseButtonFocused;
+        pauseButtonFocused = (pauseButtonFocused) % 4;
       }
       drawPauseMenu();
     } else if (keyCode === 32 || keyCode === 13){ // spacebar or Enter
@@ -384,11 +390,12 @@ document.addEventListener('keydown', event => {
       } else if (pauseButtonFocused === 2){
         musicEnabled = !musicEnabled;
 
-
-
-        // TODO: disable/enable music here
-
-
+        if (musicEnabled){
+          music.play();
+        } else {
+          music.pause();
+          music.currentTime = 0;
+        }
 
         drawPauseMenu();
       } else if (pauseButtonFocused === 3){
@@ -516,6 +523,6 @@ const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 var fallingPieces = 0;
 var explodingPieces = 0;
 
-playAudio(musicAudioName, true);
+var music = playAudio(musicAudioName, true);
 
 loadImages();

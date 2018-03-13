@@ -5,6 +5,8 @@ const lightBlue = '#3a84c1';        // used for gameover BG
 const newHighscoreBlue = '#57cbf0'; // used for the "New Highscore" text
 const buttonGreen = '#65be7a';      // used for buttons
 const pauseLightGrey = '#cfd0d4';   // used for pause BG
+const pauseMiddleGrey = '#a8aaa7';  // used for turned off switches
+const pauseDarkGrey = '#626367';    // used for pause text
 const bgNumberedColors = [          // used for game BG (depends on current piece)
   '#488557',  // 1 piece color
   '#b19438',  // 2 piece color
@@ -54,7 +56,7 @@ const avgScoreUpImgName = 'avg-score-up.png';
 const avgScoreDownImgName = 'avg-score-down.png';
 
 // Audio files names -------------------
-const dingAudioName = 'ding.mp3';
+const explosionAudioName = 'ding.mp3';
 const musicAudioName = 'retroland-recital.mp3';
 
 // Dimensions --------------------
@@ -110,8 +112,19 @@ const logoRatio = 1080/449;
 const pauseWScale = 0.8;  // WRT grid width
 
 const pauseUpperVPadScale = 0.15; // WRT canvas height
+const pauseMiddleVPadScale = 0.6; // WRT canvas height
 
 const pauseButtonPadScale = 0.5;  // WRT button height
+const pauseSwitchHScale = 0.7;    // WRT button height
+
+const pauseSwitchWScale = 2;              // WRT switch height
+const pauseSwitchNameTextHScale = 0.6;    // WRT switch height
+const pauseSwitchTextHScale = 0.3;        // WRT switch height
+const pauseSwitchInnerBorderScale = 0.15; // WRT switch height
+const pauseSwitchPadScale = 0.2;          // WRT switch height
+
+const pauseSwitchLeftHPadScale = 0.1;   // WRT grid width
+const pauseSwitchMiddleHPadScale = 0.5; // WRT grid width
 
 // Animations -------------------
 const msPerCellFall = 100;
@@ -184,8 +197,19 @@ function setDimensions(){
   pauseW = gridWH * pauseWScale;
 
   pauseUpperVPad = canvasH * pauseUpperVPadScale;
+  pauseMiddleVPad = canvasH * pauseMiddleVPadScale;
 
   pauseButtonPad = buttonH * pauseButtonPadScale;
+  pauseSwitchH = buttonH * pauseSwitchHScale;
+
+  pauseSwitchW = pauseSwitchH * pauseSwitchWScale;
+  pauseSwitchNameTextH = pauseSwitchH * pauseSwitchNameTextHScale;
+  pauseSwitchTextH = pauseSwitchH * pauseSwitchTextHScale;
+  pauseSwitchInnerBorder = pauseSwitchH * pauseSwitchInnerBorderScale;
+  pauseSwitchPad = pauseSwitchH * pauseSwitchPadScale;
+
+  pauseSwitchLeftHPad = gridWH * pauseSwitchLeftHPadScale;
+  pauseSwitchMiddleHPad = gridWH * pauseSwitchMiddleHPadScale;
 
   pauseLogoH = pauseW / logoRatio;
 }
@@ -250,8 +274,19 @@ var mainMenuLogoH;
 var pauseW;
 
 var pauseUpperVPad;
+var pauseMiddleVPad;
 
 var pauseButtonPad;
+var pauseSwitchH;
+
+var pauseSwitchW;
+var pauseSwitchNameTextH;
+var pauseSwitchTextH;
+var pauseSwitchInnerBorder;
+var pauseSwitchPad;
+
+var pauseSwitchLeftHPad;
+var pauseSwitchMiddleHPad;
 
 var pauseLogoH;
 
@@ -361,6 +396,21 @@ function setOrigins(){
 
   pauseButtonMainMenuX = pauseButtonsX + pauseW/2 - buttonW/2;
   pauseButtonMainMenuY = pauseButtonsY + buttonH + pauseButtonPad;
+
+  pauseSwitchesX = 0;
+  pauseSwitchesY = 0 + pauseMiddleVPad;
+
+  pauseSwitchMusicNameX = pauseSwitchesX + pauseSwitchLeftHPad + 0;
+  pauseSwitchMusicNameY = pauseSwitchesY + 0;
+
+  pauseSwitchMusicX = pauseSwitchesX + pauseSwitchMiddleHPad + 0;
+  pauseSwitchMusicY = pauseSwitchesY + 0;
+
+  pauseSwitchSoundNameX = pauseSwitchesX + pauseSwitchLeftHPad + 0;;
+  pauseSwitchSoundNameY = pauseSwitchesY + pauseSwitchH + pauseSwitchPad;
+
+  pauseSwitchSoundX = pauseSwitchesX + pauseSwitchMiddleHPad + 0;;
+  pauseSwitchSoundY = pauseSwitchesY + pauseSwitchH + pauseSwitchPad;
 }
 
 var playAreaX;
@@ -461,5 +511,20 @@ var pauseButtonRestartY;
 
 var pauseButtonMainMenuX;
 var pauseButtonMainMenuY;
+
+var pauseSwitchesX;
+var pauseSwitchesY;
+
+var pauseSwitchMusicNameX;
+var pauseSwitchMusicNameY;
+
+var pauseSwitchMusicX;
+var pauseSwitchMusicY;
+
+var pauseSwitchSoundNameX;
+var pauseSwitchSoundNameY;
+
+var pauseSwitchSoundX;
+var pauseSwitchSoundY;
 
 setOrigins();

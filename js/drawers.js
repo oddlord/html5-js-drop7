@@ -332,17 +332,17 @@ function drawPauseMenu(){
   context.fillRect(0, 0, pauseW, canvasH);
 
   context.textAlign = 'center';
+  context.textBaseline = 'middle';
 
   if (inGame){
     context.fillStyle = buttonGreen;
     context.fillRect(pauseButtonRestartX, pauseButtonRestartY, buttonW, buttonH);
     context.fillStyle = 'white';
-    context.textBaseline = 'middle';
     context.font = buttonTextH + 'px Arial';
     context.fillText('Restart Game', pauseW/2, pauseButtonRestartY + buttonH/2);
     if (pauseButtonFocused === 0){
       context.lineWidth = buttonBorderFocusedW;
-      context.strokeStyle = 'white';
+      context.strokeStyle = pauseDarkGrey;
       context.beginPath();
       context.rect(pauseButtonRestartX, pauseButtonRestartY, buttonW, buttonH);
       context.stroke();
@@ -351,19 +351,72 @@ function drawPauseMenu(){
     context.fillStyle = buttonGreen;
     context.fillRect(pauseButtonMainMenuX, pauseButtonMainMenuY, buttonW, buttonH);
     context.fillStyle = 'white';
-    context.textBaseline = 'middle';
     context.font = buttonTextH + 'px Arial';
     context.fillText('Main Menu', pauseW/2, pauseButtonMainMenuY + buttonH/2);
     if (pauseButtonFocused === 1){
       context.lineWidth = buttonBorderFocusedW;
-      context.strokeStyle = 'white';
+      context.strokeStyle = pauseDarkGrey;
       context.beginPath();
       context.rect(pauseButtonMainMenuX, pauseButtonMainMenuY, buttonW, buttonH);
       context.stroke();
     }
   }
 
-  // TODO: Music & sound buttons here!
+  context.textAlign = 'left';
+  context.font = pauseSwitchNameTextH + 'px Arial';
+  context.fillStyle = pauseDarkGrey;
+  context.fillText('Music', pauseSwitchMusicNameX, pauseSwitchMusicNameY + pauseSwitchH/2);
+  if (musicEnabled){
+    context.fillStyle = buttonGreen;
+  } else {
+    context.fillStyle = pauseMiddleGrey;
+  }
+  context.fillRect(pauseSwitchMusicX, pauseSwitchMusicY, pauseSwitchW, pauseSwitchH);
+  if (pauseButtonFocused === 2){
+    context.lineWidth = buttonBorderFocusedW;
+    context.strokeStyle = pauseDarkGrey;
+    context.beginPath();
+    context.rect(pauseSwitchMusicX, pauseSwitchMusicY, pauseSwitchW, pauseSwitchH);
+    context.stroke();
+  }
+  context.textAlign = 'center';
+  context.font = pauseSwitchTextH + 'px Arial';
+  context.fillStyle = 'white';
+  if (musicEnabled){
+    context.fillText('ON', pauseSwitchMusicX + pauseSwitchW/4, pauseSwitchMusicY + pauseSwitchH/2);
+    context.fillRect(pauseSwitchMusicX + pauseSwitchW/2 + pauseSwitchInnerBorder, pauseSwitchMusicY + pauseSwitchInnerBorder, pauseSwitchW/2 - 2*pauseSwitchInnerBorder, pauseSwitchH - 2*pauseSwitchInnerBorder);
+  } else {
+    context.fillText('OFF', pauseSwitchMusicX + 3*pauseSwitchW/4, pauseSwitchMusicY + pauseSwitchH/2);
+    context.fillRect(pauseSwitchMusicX + pauseSwitchInnerBorder, pauseSwitchMusicY + pauseSwitchInnerBorder, pauseSwitchW/2 - 2*pauseSwitchInnerBorder, pauseSwitchH - 2*pauseSwitchInnerBorder);
+  }
+
+  context.textAlign = 'left';
+  context.font = pauseSwitchNameTextH + 'px Arial';
+  context.fillStyle = pauseDarkGrey;
+  context.fillText('Sound Effects', pauseSwitchSoundNameX, pauseSwitchSoundNameY + pauseSwitchH/2);
+  if (soundEnabled){
+    context.fillStyle = buttonGreen;
+  } else {
+    context.fillStyle = pauseMiddleGrey;
+  }
+  context.fillRect(pauseSwitchSoundX, pauseSwitchSoundY, pauseSwitchW, pauseSwitchH);
+  if (pauseButtonFocused === 3){
+    context.lineWidth = buttonBorderFocusedW;
+    context.strokeStyle = pauseDarkGrey;
+    context.beginPath();
+    context.rect(pauseSwitchSoundX, pauseSwitchSoundY, pauseSwitchW, pauseSwitchH);
+    context.stroke();
+  }
+  context.textAlign = 'center';
+  context.font = pauseSwitchTextH + 'px Arial';
+  context.fillStyle = 'white';
+  if (soundEnabled){
+    context.fillText('ON', pauseSwitchSoundX + pauseSwitchW/4, pauseSwitchSoundY + pauseSwitchH/2);
+    context.fillRect(pauseSwitchSoundX + pauseSwitchW/2 + pauseSwitchInnerBorder, pauseSwitchSoundY + pauseSwitchInnerBorder, pauseSwitchW/2 - 2*pauseSwitchInnerBorder, pauseSwitchH - 2*pauseSwitchInnerBorder);
+  } else {
+    context.fillText('OFF', pauseSwitchSoundX + 3*pauseSwitchW/4, pauseSwitchSoundY + pauseSwitchH/2);
+    context.fillRect(pauseSwitchSoundX + pauseSwitchInnerBorder, pauseSwitchSoundY + pauseSwitchInnerBorder, pauseSwitchW/2 - 2*pauseSwitchInnerBorder, pauseSwitchH - 2*pauseSwitchInnerBorder);
+  }
 
   context.drawImage(images[drop7GreyImgName], 0, canvasH - pauseLogoH, pauseW, pauseLogoH);
 
