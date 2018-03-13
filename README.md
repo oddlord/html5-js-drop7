@@ -32,6 +32,8 @@ To move through menus, use **W**/**S** (**up**/**down** arrow keys) to move thro
 
 Hitting the **ESC** key will prompt the pause menu, where music and sound effects can be toggled and, if in the middle of a game, the current game can be restarted or quit.
 
+To play the game, open the file *index.html* with any browser (Google Chrome 65 recommended).
+
 ## Credits
 
 All the rights over the original Drop7 games belongs to Zynga Inc.
