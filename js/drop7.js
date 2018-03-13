@@ -411,7 +411,6 @@ document.addEventListener('keydown', event => {
           music.play();
         } else {
           music.pause();
-          music.currentTime = 0;
         }
 
         drawPauseMenu();
