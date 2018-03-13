@@ -160,7 +160,7 @@ function updateChain(elapsedTime){
   if (chain > 1){
     const chainHIncrease = Math.sin(Math.PI/(msExplosion + msMatchPoints) * elapsedTime) * maxChainHIncScale * cellWH;
 
-    context.font = (chainH+chainHIncrease) + 'px Arial';
+    context.font = 'bold ' + (chainH+chainHIncrease) + 'px Arial';
     context.fillStyle = darkBlue;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
