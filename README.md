@@ -28,7 +28,7 @@ The game is controlled through keyboard.
 
 To control the disc, use **A**/**D** (**left**/**right** arrow keys) to move it sideways and **S** (**down** arrow key) to drop it.
 
-To move through menus, use **W**/**S** (**up**/**down** arrow keys) to move through the options and **spacebar**/**enter* to select.
+To move through menus, use **W**/**S** (**up**/**down** arrow keys) to move through the options and **spacebar**/**enter** to select.
 
 Hitting the **ESC** key will prompt the pause menu, where music and sound effects can be toggled and, if in the middle of a game, the current game can be restarted or quit.
 
