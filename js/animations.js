@@ -207,3 +207,43 @@ function nextLevelAnimDone(points){
   animatingNextLevel = false;
   nextLevelPost(points);
 }
+
+function boardClearAnimStart(){
+  animatingBoardClear = true;
+
+  if (soundEnabled){
+    playAudio(explosionAudioName, false);
+  }
+
+  window.requestAnimationFrame(function() {
+    boardClearAnim(now());
+  });
+}
+
+function boardClearAnim(startTime){
+  const elapsedTime = deltaTime(startTime);
+
+  if (elapsedTime >= msNextLevel){
+    boardClearAnimDone();
+    return;
+  }
+
+  const textHIncrease = Math.sin((Math.PI/msNextLevel) * elapsedTime) * maxNextLevelHIncScale * cellWH;
+
+  drawGrid();
+
+  context.font = 'bold ' + (chainH+textHIncrease) + 'px Arial';
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText('BOARD CLEAR +'+getFormattedScore(70000), gridWH/2, gridY + gridWH - cellWH/2);
+
+  window.requestAnimationFrame(function() {
+    boardClearAnim(startTime);
+  });
+}
+
+function boardClearAnimDone(){
+  animatingBoardClear = false;
+  checkBoardClearPost();
+}

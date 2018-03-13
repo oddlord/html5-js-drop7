@@ -129,6 +129,7 @@ function inAnimation(){
   inAnimation |= fallingPieces > 0;
   inAnimation |= explodingPieces > 0;
   inAnimation |= animatingNextLevel;
+  inAnimation |= animatingBoardClear;
 
   return inAnimation;
 }

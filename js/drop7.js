@@ -161,8 +161,6 @@ function nextLevelPre(){
   }
 
   nextLevelAnimStart(points);
-
-
 }
 
 function nextLevelPost(points){
@@ -190,7 +188,7 @@ function nextLevelPost(points){
   checkMatches();
 }
 
-function checkEmptyGrid(){
+function checkBoardClearPre(){
   let emptyGrid = true;
   colsLoop: for (let i = 1; i <= 7; i++){
     for (let j = 1; j <= 7; j++){
@@ -202,15 +200,20 @@ function checkEmptyGrid(){
   }
 
   if (emptyGrid){
-    score += 70000;
+    boardClearAnimStart();
   }
+}
+
+function checkBoardClearPost(){
+  score += 70000;
+  drawGame();
 }
 
 function dropSequenceDone(){
   drawDrop();
   drawGrid();
 
-  checkEmptyGrid();
+  checkBoardClearPre();
 
   checkGameover();
 
@@ -316,6 +319,7 @@ function resetVars(){
   fallingPieces = 0;
   explodingPieces = 0;
   animatingNextLevel = false;
+  animatingBoardClear = false;
 }
 
 function mainMenu(){
@@ -364,6 +368,9 @@ document.addEventListener('keydown', event => {
   if (debugMode){
     if (keyCode === 75){  // K (as in "kill")
       gameover();
+    } else if (keyCode === 66){ // B (as in "board clear")
+      grid = createMatrix(8, 8, null);
+      checkBoardClearPre();
     }
   }
 
@@ -533,6 +540,7 @@ const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 var fallingPieces = 0;
 var explodingPieces = 0;
 var animatingNextLevel = false;
+var animatingBoardClear = false;
 
 var music = playAudio(musicAudioName, true);
 
