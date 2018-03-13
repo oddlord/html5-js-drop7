@@ -116,7 +116,7 @@ function checkMatches(){
   } else {
     if (playerAction){
       if (dropCount === 0){
-        nextLevel();
+        nextLevelPre();
       } else {
         dropSequenceDone();
       }
@@ -152,13 +152,22 @@ function checkGameover(){
   }
 }
 
-function nextLevel(){
-  level++;
+function nextLevelPre(){
+  let points;
   if (mode === 'blitz'){
-    score += 17000;
+    points = 17000;
   } else {
-    score += 7000;
+    points = 7000;
   }
+
+  nextLevelAnimStart(points);
+
+
+}
+
+function nextLevelPost(points){
+  level++;
+  score += points;
 
   dropCount = getMaxDrops();
   drawDropCount();
@@ -306,6 +315,7 @@ function resetVars(){
 
   fallingPieces = 0;
   explodingPieces = 0;
+  animatingNextLevel = false;
 }
 
 function mainMenu(){
@@ -522,6 +532,7 @@ const sequenceEmerging = [sp(6), sp(4), sp(5), sp(7), sp(5), sp(1), sp(3)];
 
 var fallingPieces = 0;
 var explodingPieces = 0;
+var animatingNextLevel = false;
 
 var music = playAudio(musicAudioName, true);
 

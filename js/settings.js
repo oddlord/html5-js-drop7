@@ -137,6 +137,9 @@ const maxMatchPointsHIncScale = 0.25;
 
 const maxChainHIncScale = 0.3;
 
+const msNextLevel = 1000;
+const maxNextLevelHIncScale = 0.2;
+
 function setDimensions(){
   canvasH = document.body.clientHeight * canvasHScale;
 

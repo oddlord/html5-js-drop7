@@ -167,3 +167,43 @@ function updateChain(elapsedTime){
     context.fillText('CHAIN x'+chain, gridWH/2, dropY + cellWH/2);
   }
 }
+
+function nextLevelAnimStart(points){
+  animatingNextLevel = true;
+
+  if (soundEnabled){
+    playAudio(explosionAudioName, false);
+  }
+
+  window.requestAnimationFrame(function() {
+    nextLevelAnim(points, now());
+  });
+}
+
+function nextLevelAnim(points, startTime){
+  const elapsedTime = deltaTime(startTime);
+
+  if (elapsedTime >= msNextLevel){
+    nextLevelAnimDone(points);
+    return;
+  }
+
+  const textHIncrease = Math.sin((Math.PI/msNextLevel) * elapsedTime) * maxNextLevelHIncScale * cellWH;
+
+  drawPlayArea();
+
+  context.font = 'bold ' + (chainH+textHIncrease) + 'px Arial';
+  context.fillStyle = 'white';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText('LEVEL BONUS +'+getFormattedScore(points), gridWH/2, gridY + cellWH/2);
+
+  window.requestAnimationFrame(function() {
+    nextLevelAnim(points, startTime);
+  });
+}
+
+function nextLevelAnimDone(points){
+  animatingNextLevel = false;
+  nextLevelPost(points);
+}
