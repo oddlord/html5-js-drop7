@@ -524,9 +524,9 @@ const scores = {
   'sequence': []
 };
 
-gameoverButtonFocused = 0;
-mainMenuButtonFocused = 0;
-pauseButtonFocused = 0;
+let gameoverButtonFocused = 0;
+let mainMenuButtonFocused = 0;
+let pauseButtonFocused = 0;
 
 var sequenceNextPiece = 0;
 const sequenceDrops = [
