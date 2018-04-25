@@ -11,12 +11,12 @@ function canvasInit(){
 }
 
 function startLoading(){
-  const loadingImg = new Image();
-  loadingImg.src = 'img/' + loadingImgName;
-  loadingImg.classList.add('loading-text');
-  loadingImg.onload = function(){
+  loadingText = new Image();
+  loadingText.src = 'img/' + loadingImgName;
+  loadingText.classList.add('loading-text');
+  loadingText.onload = function(){
     const aligner = document.getElementById('aligner');
-    aligner.appendChild(loadingImg);
+    aligner.appendChild(loadingText);
     loadMedia();
   }
 }

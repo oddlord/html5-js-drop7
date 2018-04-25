@@ -358,8 +358,8 @@ function gameover(){
 }
 
 function loadingComplete(){
-  //loadingText.style.display = 'none';
-  //canvas.style.display = 'block';
+  loadingText.style.display = 'none';
+  canvas.style.display = 'block';
   isLoaded = true;
   audios[musicAudioName.src].play();
   mainMenu();
