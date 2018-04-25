@@ -133,16 +133,3 @@ function inAnimation(){
 
   return inAnimation;
 }
-
-function playAudio(audioName, loop){
-  const audio = new Audio('audio/'+audioName);
-  if (loop){
-    audio.addEventListener('ended', function() {
-      this.currentTime = 0;
-      this.play();
-    }, false);
-  }
-  audio.play();
-
-  return audio;
-}

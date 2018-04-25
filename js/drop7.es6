@@ -358,7 +358,11 @@ function gameover(){
 }
 
 function loadingComplete(){
+  const loadingText = document.getElementById('loading');
+  loadingText.style.display = 'none';
+  canvas.style.display = 'block';
   isLoaded = true;
+  audios[musicAudioName.src].play();
   mainMenu();
 }
 
@@ -408,9 +412,9 @@ document.addEventListener('keydown', event => {
         musicEnabled = !musicEnabled;
 
         if (musicEnabled){
-          music.play();
+          audios[musicAudioName.src].play();
         } else {
-          music.pause();
+          audios[musicAudioName.src].pause();
         }
 
         drawPauseMenu();
@@ -541,6 +545,4 @@ var explodingPieces = 0;
 var animatingNextLevel = false;
 var animatingBoardClear = false;
 
-var music = playAudio(musicAudioName, true);
-
-loadImages();
+loadMedia();

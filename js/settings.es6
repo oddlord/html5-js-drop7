@@ -56,8 +56,14 @@ const avgScoreUpImgName = 'avg-score-up.png';
 const avgScoreDownImgName = 'avg-score-down.png';
 
 // Audio files names -------------------
-const explosionAudioName = 'ding.mp3';
-const musicAudioName = 'retroland-recital.mp3';
+const explosionAudioName = {
+  src: 'ding.mp3',
+  loop: false
+};
+const musicAudioName = {
+  src: 'retroland-recital.mp3',
+  loop: true
+};
 
 // Dimensions --------------------
 const canvasHScale = 0.9; // WRT document body

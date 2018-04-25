@@ -8,6 +8,7 @@ body {
 
 canvas {
   // border: solid .2em #000;
+  display: none;
 }
 
 .aligner {
@@ -16,4 +17,9 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.loading-text {
+  position: absolute;
+  height: 25%;
 }

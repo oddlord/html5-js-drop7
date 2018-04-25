@@ -9,23 +9,34 @@ function canvasInit(){
   context.imageSmoothingQuality = 'high';
 }
 
-function loadImages(){
+function loadMedia(){
   for (let i = 0; i < imagesSrc.length; i++){
     const img = new Image();
     img.src = 'img/' + imagesSrc[i];
     images[imagesSrc[i]] = img;
+    img.onload = function(){
+      loadPost();
+    }
   }
 
-  for (let imgName in images){
-    images[imgName].onload = function(){
-      imageLoadPost();
+  for (let i = 0; i < audiosSrc.length; i++){
+    const audio = new Audio('audio/' + audiosSrc[i].src);
+    audios[audiosSrc[i].src] = audio;
+    audio.addEventListener('canplaythrough', function() {
+      loadPost();
+    }, false);
+    if (audiosSrc[i].loop){
+      audio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+      }, false);
     }
   }
 }
 
-function imageLoadPost(){
-  loadedImages++;
-  if (loadedImages === Object.keys(images).length){
+function loadPost(){
+  loadedObjects++;
+  if (loadedObjects === (Object.keys(imagesSrc).length + Object.keys(audiosSrc).length)){
     loadingComplete();
   }
 }
@@ -49,5 +60,12 @@ const imagesSrc = [
   avgScoreDownImgName
 ]
 
+const audiosSrc = [
+  explosionAudioName,
+  musicAudioName
+]
+
 const images = {};
-var loadedImages = 0;
+const audios = {};
+
+var loadedObjects = 0;
