@@ -1,3 +1,4 @@
+var loadingText;
 const canvas = document.getElementById('d7-canvas');
 const context = canvas.getContext('2d');
 
@@ -7,6 +8,17 @@ function canvasInit(){
 
   context.imageSmoothingEnabled = true;
   context.imageSmoothingQuality = 'high';
+}
+
+function startLoading(){
+  const loadingImg = new Image();
+  loadingImg.src = 'img/' + loadingImgName;
+  loadingImg.classList.add('loading-text');
+  loadingImg.onload = function(){
+    const aligner = document.getElementById('aligner');
+    aligner.appendChild(loadingImg);
+    loadMedia();
+  }
 }
 
 function loadMedia(){

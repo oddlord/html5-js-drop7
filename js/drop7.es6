@@ -358,9 +358,8 @@ function gameover(){
 }
 
 function loadingComplete(){
-  const loadingText = document.getElementById('loading');
-  loadingText.style.display = 'none';
-  canvas.style.display = 'block';
+  //loadingText.style.display = 'none';
+  //canvas.style.display = 'block';
   isLoaded = true;
   audios[musicAudioName.src].play();
   mainMenu();
@@ -545,4 +544,4 @@ var explodingPieces = 0;
 var animatingNextLevel = false;
 var animatingBoardClear = false;
 
-loadMedia();
+startLoading();

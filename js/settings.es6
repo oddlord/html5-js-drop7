@@ -1,7 +1,7 @@
 // Misc settings ---------------------
 const cellBlue = '#284c7c';         // used for grid cells
 const darkBlue = '#223f5f';         // used for text and other elements
-const lightBlue = '#3a84c1';        // used for gameover BG
+const lightBlue = '#3a84c1';        // used for gameover and menu BG
 const newHighscoreBlue = '#57cbf0'; // used for the "New Highscore" text
 const buttonGreen = '#65be7a';      // used for buttons
 const pauseLightGrey = '#cfd0d4';   // used for pause BG
@@ -38,6 +38,7 @@ const blitzDrops = 5;
 const maxDropCountsRef = Math.max(classicSequenceDrops, blitzDrops);
 
 // Images names ------------------
+const loadingImgName = 'loading.png';
 const numberedPiecesImgNames = [
   '1piece.png',
   '2piece.png',
