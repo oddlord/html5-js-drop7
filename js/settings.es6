@@ -58,12 +58,14 @@ const avgScoreDownImgName = 'avg-score-down.png';
 
 // Audio files names -------------------
 const explosionAudioName = {
-  src: 'ding.mp3',
-  loop: false
+  src: 'ding.mp3',  // audio file name located in audio/
+  loop: false,      // replay the audio when finished?
+  clone: true       // play a clone of the audio to allow multiple audios played at once?
 };
 const musicAudioName = {
   src: 'retroland-recital.mp3',
-  loop: true
+  loop: true,
+  clone: false
 };
 
 // Dimensions --------------------

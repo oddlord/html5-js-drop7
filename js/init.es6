@@ -39,8 +39,7 @@ function loadMedia(){
     }, false);
     if (audiosSrc[i].loop){
       audio.addEventListener('ended', function() {
-        this.currentTime = 0;
-        this.play();
+        replayAudio(audiosSrc[i]);
       }, false);
     }
   }

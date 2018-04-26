@@ -133,3 +133,21 @@ function inAnimation(){
 
   return inAnimation;
 }
+
+function playAudio(audioName){
+  let audio = audios[audioName.src];
+  if (audioName.clone){
+    audio = audio.cloneNode(true);
+  }
+  audio.play();
+}
+
+function pauseAudio(audioName){
+  audios[audioName.src].pause();
+}
+
+function replayAudio(audioName){
+  const audio = audios[audioName.src];
+  audio.currentTime = 0;
+  playAudio(audioName);
+}

@@ -90,7 +90,7 @@ function explosionAnim(matchedPieces, points, startTime){
 function matchPointsAnimStart(matchedPieces, points, startTime){
   for (let matchedPiece of matchedPieces){
     if (playerAction && soundEnabled){
-      audios[explosionAudioName.src].play();
+      playAudio(explosionAudioName);
     }
 
     const i = matchedPiece.i;
@@ -172,7 +172,7 @@ function nextLevelAnimStart(points){
   animatingNextLevel = true;
 
   if (soundEnabled){
-    audios[explosionAudioName.src].play();
+    playAudio(explosionAudioName);
   }
 
   window.requestAnimationFrame(function() {
@@ -212,7 +212,7 @@ function boardClearAnimStart(){
   animatingBoardClear = true;
 
   if (soundEnabled){
-    audios[explosionAudioName.src].play();
+    playAudio(explosionAudioName);
   }
 
   window.requestAnimationFrame(function() {

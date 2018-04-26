@@ -361,7 +361,7 @@ function loadingComplete(){
   loadingText.style.display = 'none';
   canvas.style.display = 'block';
   isLoaded = true;
-  audios[musicAudioName.src].play();
+  playAudio(musicAudioName);
   mainMenu();
 }
 
@@ -411,9 +411,9 @@ document.addEventListener('keydown', event => {
         musicEnabled = !musicEnabled;
 
         if (musicEnabled){
-          audios[musicAudioName.src].play();
+          playAudio(musicAudioName);
         } else {
-          audios[musicAudioName.src].pause();
+          pauseAudio(musicAudioName);
         }
 
         drawPauseMenu();
