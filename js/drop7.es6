@@ -2,7 +2,7 @@ function applyGravity(){
   let noPieceFell = true;
 
   for (let i = 1; i <= 7; i++){
-    for (let j = 7; j >= 1; j--){
+    for (let j = 7; j >= 0; j--){
       if (j === 7 || grid[i][j] === null){
         continue;
       }
